@@ -1,9 +1,10 @@
 #include <sourcemod>
 
-new TEAM_T = 2;
-new TEAM_CT = 3;
+new const TEAM_T = 2;
+new const TEAM_CT = 3;
 
-new bool:started;
+new BEACON_T, BEACON_CT;
+new bool:started = false;
 
 public Plugin myinfo =
 {
@@ -15,25 +16,28 @@ public Plugin myinfo =
 };
 
 public void OnPluginStart() {
+	HookEvent("round_start", Event_RoundStart);
 	RegConsoleCmd("sm_stattrak", Command_StartStatTrak);
 }
 
+public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
+	if (started) {
+		StartBeacons();
+	}
+}
+
 public Action:Command_StartStatTrak(client, args) {
-	PrintToChatAll("Starting StatTrak Night...");
+	PrintToChatAll("Starting StatTrak Night next round");
+	BEACON_T = GetRandomPlayerOnTeam(TEAM_T);
+	BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
 	started = true;
-	StartBeacons();
 	return Plugin_Handled;
 }
 
 StartBeacons() {
-	StopBeacons();
-	Beacon(GetRandomPlayerOnTeam(TEAM_CT));
-	Beacon(GetRandomPlayerOnTeam(TEAM_T));
+	Beacon(BEACON_T);
+	Beacon(BEACON_CT);
 	return Plugin_Handled;
-}
-
-StopBeacons() {
-
 }
 
 char[] GetName(client) {
@@ -49,12 +53,12 @@ Beacon(name) {
 int GetRandomPlayerOnTeam(team) {
 	new clientids[GetClientCount()];
 	new i = 0;
-	for ( new j = 1; j <= GetMaxClients(); j++) {
+	for ( new j = 1; j <= GetMaxClients(); j++ ) {
 		if ( IsClientInGame(j) && IsPlayerAlive(j) && GetClientTeam(j) == team ) {
 			clientids[i] = j;
 			i++;
 		}
 	}
-	new randint = GetRandomInt(0, i);
+	new randint = GetRandomInt(0, i-1);
 	return clientids[randint];
 }
