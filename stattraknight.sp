@@ -43,8 +43,6 @@ public Action:Command_StatTrak(client, args) {
 }
 
 start(client) {
-	BEACON_T = GetRandomPlayerOnTeam(TEAM_T);
-	BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	started = true;
@@ -57,7 +55,6 @@ stop(client) {
 }
 
 public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadcast) {
-	PrintToChatAll("");
 	started = false;
 }
 public void Event_MatchEndRestart(Event event, const char[] name, bool dontBroadcast) {
@@ -78,6 +75,8 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
+		BEACON_T = GetRandomPlayerOnTeam(TEAM_T);
+		BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
 		Beacon(BEACON_T);
 		Beacon(BEACON_CT);
 		PrintToChatAll("\x08%s\x01 and \x02%s\x01 are the targets!", GetName(BEACON_CT), GetName(BEACON_T));
@@ -100,7 +99,6 @@ int GetRandomPlayerOnTeam(team) {
 		}
 	}
 	new randint = GetRandomInt(0, i-1);
-	PrintToChatAll("randint: %i, ids: %i", randint, ids[randint]);
 	return GetClientUserId(ids[randint]);
 }
 
