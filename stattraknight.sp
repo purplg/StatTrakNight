@@ -1,4 +1,5 @@
 #include <sourcemod>
+#include <smlib>
 
 new const TEAM_T = 2;
 new const TEAM_CT = 3;
@@ -66,9 +67,9 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		int victim_id = GetEventInt(event, "userid");
 		int attacker_id = GetEventInt(event, "attacker");
 		if (victim_id == BEACON_CT) {
-			PrintToChatAll(" \x06%s\x01 was killed by %s!", GetName(victim_id), GetName(attacker_id));
+			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s!", GetName(victim_id), GetName(attacker_id));
 		} else if (victim_id == BEACON_T) {
-			PrintToChatAll(" \x02%s\x01 was killed by %s!", GetName(victim_id), GetName(attacker_id));
+			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s!", GetName(victim_id), GetName(attacker_id));
 		}
 	}
 }
@@ -79,26 +80,26 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
 		Beacon(BEACON_T);
 		Beacon(BEACON_CT);
-		PrintToChatAll("\x08%s\x01 and \x02%s\x01 are the targets!", GetName(BEACON_CT), GetName(BEACON_T));
+		Client_PrintToChatAll(false, "{B}%s{N} and \x09%s\x01 are the targets!", GetName(BEACON_CT), GetName(BEACON_T));
 	}
 }
 
 char[] GetName(userid) {
-	new String:name[16]
+	new String:name[16];
 	GetClientName(GetClientOfUserId(userid), name, 16)
 	return name;
 }
 
 int GetRandomPlayerOnTeam(team) {
-	new ids[GetClientCount()];
+	new ids[Team_GetClientCount(team)];
 	new i = 0;
 	for ( new j = 1; j <= GetMaxClients(); j++ ) {
-		if ( IsClientInGame(j) && IsPlayerAlive(j) && GetClientTeam(j) == team ) {
+		if ( Client_IsValid(j) && IsClientInGame(j) && IsPlayerAlive(j) && GetClientTeam(j) == team ) {
 			ids[i] = j;
 			i++;
 		}
 	}
-	new randint = GetRandomInt(0, i-1);
+	new randint = Math_GetRandomInt(0, i-1);
 	return GetClientUserId(ids[randint]);
 }
 
