@@ -6,8 +6,8 @@ new const TEAM_CT = 3;
 
 new BEACON_T, BEACON_CT;
 new bool:started = false;
-new String:T_KILLERS[15];
-new String:CT_KILLERS[15];
+new String:T_KILLERS[14];
+new String:CT_KILLERS[14];
 
 public Plugin myinfo =
 {
@@ -66,6 +66,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 	if (started) {
 		int victim_id = GetEventInt(event, "userid");
 		int attacker_id = GetEventInt(event, "attacker");
+		if(victim_id == attacker_id) return;
 		if (GetClientOfUserId(victim_id) == BEACON_CT) {
 			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s!", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)));
 		} else if (GetClientOfUserId(victim_id) == BEACON_T) {
