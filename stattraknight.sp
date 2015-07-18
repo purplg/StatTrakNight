@@ -18,26 +18,42 @@ public Plugin myinfo =
 };
 
 public void OnPluginStart() {
-	RegConsoleCmd("sm_stattrakstart", Command_StartStatTrak);
-	RegConsoleCmd("sm_stattrakstop", Command_StopStatTrak);
+	RegConsoleCmd("sm_stattrak", Command_StatTrak);
 	HookEvent("cs_win_panel_match", Event_WinPanelMatch);
 	HookEvent("cs_match_end_restart", Event_MatchEndRestart);
 }
 
-public Action:Command_StartStatTrak(client, args) {
+public Action:Command_StatTrak(client, args) {
+	char arg1[32];
+	GetCmdArg(1, arg1, sizeof(arg1));
+	if (arg1[0] != 0) {
+		switch (StringToInt(arg1)) {
+			case 1: {
+				start(client);
+			}
+			case 0: {
+				stop(client);
+			}
+		}
+	} else {
+		ReplyToCommand(client, "Usage: sm_stattrak [0|1]");
+	}
+
+	return Plugin_Handled;
+}
+
+start(client) {
 	BEACON_T = GetRandomPlayerOnTeam(TEAM_T);
 	BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	started = true;
 	PrintToChatAll("Starting StatTrak Night next round");
-	return Plugin_Handled;
 }
 
-public Action:Command_StopStatTrak(client, args) {
+stop(client) {
 	PrintToChatAll("StatTrak Night has ended");
 	started = false;
-	return Plugin_Handled;
 }
 
 public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadcast) {
