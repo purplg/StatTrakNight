@@ -47,11 +47,11 @@ start(client) {
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	started = true;
-	PrintToChatAll("Starting StatTrak Night next round");
+	Client_PrintToChatAll(false, "Starting StatTrak Night next round");
 }
 
 stop(client) {
-	PrintToChatAll("StatTrak Night has ended");
+	Client_PrintToChatAll(false, "StatTrak Night has ended");
 	started = false;
 }
 
@@ -59,48 +59,35 @@ public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadca
 	started = false;
 }
 public void Event_MatchEndRestart(Event event, const char[] name, bool dontBroadcast) {
-	PrintToChatAll("MatchEndRestart");
+	Client_PrintToChatAll(false, "MatchEndRestart");
 }
 
 public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
 		int victim_id = GetEventInt(event, "userid");
 		int attacker_id = GetEventInt(event, "attacker");
-		if (victim_id == BEACON_CT) {
-			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s!", GetName(victim_id), GetName(attacker_id));
-		} else if (victim_id == BEACON_T) {
-			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s!", GetName(victim_id), GetName(attacker_id));
+		if (GetClientOfUserId(victim_id) == BEACON_CT) {
+			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s!", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)));
+		} else if (GetClientOfUserId(victim_id) == BEACON_T) {
+			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s!", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)));
 		}
 	}
 }
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
-		BEACON_T = GetRandomPlayerOnTeam(TEAM_T);
-		BEACON_CT = GetRandomPlayerOnTeam(TEAM_CT);
+		BEACON_T = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
+		BEACON_CT = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
 		Beacon(BEACON_T);
 		Beacon(BEACON_CT);
 		Client_PrintToChatAll(false, "{B}%s{N} and \x09%s\x01 are the targets!", GetName(BEACON_CT), GetName(BEACON_T));
 	}
 }
 
-char[] GetName(userid) {
+char[] GetName(client) {
 	new String:name[16];
-	GetClientName(GetClientOfUserId(userid), name, 16)
+	GetClientName(client, name, 16)
 	return name;
-}
-
-int GetRandomPlayerOnTeam(team) {
-	new ids[Team_GetClientCount(team)];
-	new i = 0;
-	for ( new j = 1; j <= GetMaxClients(); j++ ) {
-		if ( Client_IsValid(j) && IsClientInGame(j) && IsPlayerAlive(j) && GetClientTeam(j) == team ) {
-			ids[i] = j;
-			i++;
-		}
-	}
-	new randint = Math_GetRandomInt(0, i-1);
-	return GetClientUserId(ids[randint]);
 }
 
 Beacon(name) {
