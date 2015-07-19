@@ -19,25 +19,6 @@ public Plugin myinfo =
 public void OnPluginStart() {
 	RegConsoleCmd("sm_stattrak", Command_StatTrak);
 	HookEvent("cs_win_panel_match", Event_WinPanelMatch);
-	/*new killers[] = {
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		1,
-		0,
-		2,
-		2,
-		2,
-		2,
-		2,
-		2,
-		2
-	}
-	int w = findWinner(killers);
-	Client_PrintToChatAll(false, "%i wins", w);*/
 }
 
 char[] format_tie_message(int[] winners, size) {
@@ -102,7 +83,7 @@ int findWinner(winners[], size) {
 	return winners[0];
 }
 
-findWinners(a[]) {
+int findWinners(a[]) {
 	new most[15];
 	new mostIndex = 0;
 	new mostCount = 0;
@@ -135,13 +116,29 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 	if (started) {
 		int victim_id = GetEventInt(event, "userid");
 		int attacker_id = GetEventInt(event, "attacker");
-		if(victim_id == attacker_id) return;
+
+		if (victim_id == attacker_id) return;
+		if (!Client_IsValid(GetClientOfUserId(attacker_id))) return;
+		if (IsFakeClient(GetClientOfUserId(attacker_id))) return;
+
 		if (GetClientOfUserId(victim_id) == BEACON_CT) {
 			T_KILLERS[round-1] = GetSteamAccountID(GetClientOfUserId(attacker_id));
-			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s!", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)));
+			new numWon = 1;
+			for (new i = 0; i < round-1; i++) {
+				if (T_KILLERS[i] == T_KILLERS[round-1]) {
+					numWon++;
+				}
+			}
+			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s! (%i points)", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)), numWon);
 		} else if (GetClientOfUserId(victim_id) == BEACON_T) {
 			CT_KILLERS[round-1] = GetSteamAccountID(GetClientOfUserId(attacker_id));
-			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s!", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)));
+			new numWon = 1;
+			for (new i = 0; i < round-1; i++) {
+				if (CT_KILLERS[i] == CT_KILLERS[round-1]) {
+					numWon++;
+				}
+			}
+			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s! (%i points)", GetName(GetClientOfUserId(victim_id)), GetName(GetClientOfUserId(attacker_id)), numWon);
 		}
 	}
 }
