@@ -32,7 +32,7 @@ public void OnPluginStart() {
 public void OnClientCookiesCached(client) {
 	if (started) {
 		decl String:strBuffer[3];
-		GetClientCookie(Client_FindByName("PurplG"), cookie_points, strBuffer, 3);
+		GetClientCookie(client, cookie_points, strBuffer, 3);
 		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
 			SetClientCookie(client, cookie_points, "0");
 		}
