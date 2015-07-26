@@ -103,21 +103,27 @@ printLeaders() {
 	}
 	if (t_points > 0) {
 		if (t_index == 1) {
-			Client_PrintToChatAll(false, "%s is in the lead with %i points!", GetName(t_winners[0]), t_points);
+			if (t_points == 1)
+				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i point!{N}", GetName(t_winners[0]), t_points);
+			else
+				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i points!{N}", GetName(t_winners[0]), t_points);
 		} else if (t_index > 1) {
-			Client_PrintToChatAll(false, "Tie between %s", format_tie_message(t_winners, t_index, t_points));
+			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_index, t_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "No one on Terrorists has scored any points yet.");
+		Client_PrintToChatAll(false, "{R}No one on Terrorists has scored any points yet.{N}");
 	}
 	if (ct_points > 0) {
 		if (ct_index == 1) {
-			Client_PrintToChatAll(false, "%s is in the lead with %i points!", GetName(ct_winners[0]), ct_points);
+			if (ct_points == 1)
+				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i point!{N}", GetName(ct_winners[0]), ct_points);
+			else
+				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i points!{N}", GetName(ct_winners[0]), ct_points);
 		} else if (ct_index > 1) {
-			Client_PrintToChatAll(false, "Tie between %s", format_tie_message(ct_winners, ct_index, ct_points));
+			Client_PrintToChatAll(false, "{B}Tie between %s{N}", format_tie_message(ct_winners, ct_index, ct_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "No one on Counter-Terrorists has scored any points yet.");
+		Client_PrintToChatAll(false, "{B}No one on CT has scored any points yet.{N}");
 	}
 }
 
@@ -153,12 +159,20 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 		if (victim == CT_TARGET) {
 			new points = addPoint(attacker);
-			Client_PrintToChatAll(false, "{B}%s{N} was killed by %s! (%i points)",
-				GetName(victim), GetName(attacker), points);
+			if (points == 1)
+				Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i point){N}",
+					GetName(victim), GetName(attacker), points);
+			else
+				Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i points){N}",
+					GetName(victim), GetName(attacker), points);
 		} else if (victim == T_TARGET) {
 			new points = addPoint(attacker);
-			Client_PrintToChatAll(false, "{R}%s{N} was killed by %s! (%i points)",
-				GetName(victim), GetName(attacker), points);
+			if (points == 1)
+				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i point){N}",
+					GetName(victim), GetName(attacker), points);
+			else
+				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i points){N}",
+					GetName(victim), GetName(attacker), points);
 		}
 	}
 }
