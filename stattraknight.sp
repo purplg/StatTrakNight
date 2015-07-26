@@ -14,7 +14,7 @@ public Plugin myinfo =
 	author = "Ben Whitley",
 	description = "A plugin to automate StatTrak Night events",
 	version = "0.1",
-	url = "https://www.github.com/purplg"
+	url = "https://github.com/purplg/StatTrakNight"
 };
 
 public void OnPluginStart() {
