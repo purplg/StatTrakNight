@@ -33,8 +33,8 @@ public void OnClientCookiesCached(client) {
 	if (started) {
 		decl String:strBuffer[3];
 		GetClientCookie(Client_FindByName("PurplG"), cookie_points, strBuffer, 3);
-		if (GetClientCookieTime(Client_FindByName("PurplG"), cookie_points) < event_starttime) {
-			SetClientCookie(Client_FindByName("PurplG"), cookie_points, "0");
+		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
+			SetClientCookie(client, cookie_points, "0");
 		}
 	}
 }
