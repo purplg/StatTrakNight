@@ -4,17 +4,15 @@
 
 new T_TARGET, CT_TARGET;
 new bool:started = false;
-new round = 0;
 
 new event_starttime;
-
 new Handle:cookie_points;
 
 public Plugin myinfo =
 {
 	name = "StatTrak Night",
 	author = "Ben Whitley",
-	description = "A plugin to manage StatTrak Night events",
+	description = "A plugin to automate StatTrak Night events",
 	version = "0.1",
 	url = "https://www.github.com/purplg"
 };
@@ -27,6 +25,10 @@ public void OnPluginStart() {
 	cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
 }
 
+/**
+ * When a client joins, this is called when that client receives it's stored cookies from the server.
+ * This function will check to see if the points earned are for the current event, and if not erase them.
+ */
 public void OnClientCookiesCached(client) {
 	if (started) {
 		decl String:strBuffer[3];
@@ -105,10 +107,6 @@ public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadca
 	if (started) {
 		stop();
 	}
-	/*new cti = Array_FindHighestValue(ct_points, MAXPLAYERS);
-	new ti = Array_FindHighestValue(t_points, MAXPLAYERS);
-	Client_PrintToChatAll(false, "CT Winner: %s", GetName(Client_FindBySteamId(ct_steamid[cti])));
-	Client_PrintToChatAll(false, "T Winner: %s", GetName(Client_FindBySteamId(t_steamid[ti])));*/
 }
 
 int addPoint(client) {
@@ -118,20 +116,6 @@ int addPoint(client) {
 	IntToString(points, strBuffer, 3);
 	SetClientCookie(client, cookie_points, strBuffer);
 	return points;
-}
-
-char[] format_tie_message(String:winners[], size) {
-	decl String:str[255];
-	if (size == 2) {
-		Format(str, sizeof(str), "%s and %s", GetName(Client_FindBySteamId(winners[0])), GetName(Client_FindBySteamId(winners[1])));
-	} else {
-		Format(str, sizeof(str), "%s, %s", GetName(Client_FindBySteamId(winners[0])), GetName(Client_FindBySteamId(winners[1])));
-		for (new i = 2; i < size-1; i++) {
-			Format(str, sizeof(str), "%s, %s", str, GetName(Client_FindBySteamId(winners[i])));
-		}
-		Format(str, sizeof(str), "%s, and %s", str, GetName(Client_FindBySteamId(winners[size-1])));
-	}
-	return str;
 }
 
 char[] GetName(client) {
