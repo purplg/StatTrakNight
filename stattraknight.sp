@@ -44,9 +44,6 @@ public Action:Command_StatTrak(client, args) {
 	GetCmdArg(1, arg1, sizeof(arg1));
 	if (arg1[0] != 0) {
 		switch (StringToInt(arg1)) {
-			case 2: {
-				printLeaders();
-			}
 			case 1: {
 				start();
 			}
@@ -111,7 +108,7 @@ printLeaders() {
 			Client_PrintToChatAll(false, "Tie between %s", format_tie_message(t_winners, t_index, t_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "No one on Terrorists have scored any points yet.");
+		Client_PrintToChatAll(false, "No one on Terrorists has scored any points yet.");
 	}
 	if (ct_points > 0) {
 		if (ct_index == 1) {
@@ -120,7 +117,7 @@ printLeaders() {
 			Client_PrintToChatAll(false, "Tie between %s", format_tie_message(ct_winners, ct_index, ct_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "No one on Counter-Terrorists have scored any points yet.");
+		Client_PrintToChatAll(false, "No one on Counter-Terrorists has scored any points yet.");
 	}
 }
 
@@ -141,6 +138,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
+		printLeaders();
 		Client_PrintToChatAll(false, "{B}%s{N} and \x09%s\x01 are the targets!", GetName(CT_TARGET), GetName(T_TARGET));
 	}
 }
