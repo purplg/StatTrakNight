@@ -19,6 +19,7 @@ public Plugin myinfo =
 
 public void OnPluginStart() {
 	RegConsoleCmd("sm_stattrak", Command_StatTrak);
+	HookEvent("cs_match_end_restart", Event_GameStart);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_WinPanelMatch);
@@ -30,12 +31,8 @@ public void OnPluginStart() {
  * This function will check to see if the points earned are for the current event, and if not erase them.
  */
 public void OnClientCookiesCached(client) {
-	if (started) {
-		decl String:strBuffer[3];
-		GetClientCookie(client, cookie_points, strBuffer, 3);
-		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
-			SetClientCookie(client, cookie_points, "0");
-		}
+	if (!started || GetClientCookieTime(client, cookie_points) < event_starttime) {
+		SetClientCookie(client, cookie_points, "0");
 	}
 }
 
@@ -45,6 +42,7 @@ public Action:Command_StatTrak(client, args) {
 	if (arg1[0] != 0) {
 		switch (StringToInt(arg1)) {
 			case 1: {
+				stop();
 				start();
 			}
 			case 0: {
@@ -58,7 +56,7 @@ public Action:Command_StatTrak(client, args) {
 	return Plugin_Handled;
 }
 
-printLeaders() {
+calc_winners(bool:end_of_game=false) {
 	new t_size = Team_GetClientCount(2);
 	new ct_size = Team_GetClientCount(3);
 	new size = t_size;
@@ -70,10 +68,10 @@ printLeaders() {
 	Client_Get(ct_players, CLIENTFILTER_TEAMTWO);
 
 	new t_winners[t_size];
-	new t_index;
+	new t_num_winners;
 	new t_points;
-	new ct_winners[t_size];
-	new ct_index;
+	new ct_winners[ct_size];
+	new ct_num_winners;
 	new ct_points;
 	new points;
 
@@ -84,9 +82,9 @@ printLeaders() {
 			if (points > t_points) {
 				t_winners[0] = t_players[i];
 				t_points = points;
-				t_index = 1;
+				t_num_winners = 1;
 			} else if (points == t_points) {
-				t_winners[t_index++] = t_players[i];
+				t_winners[t_num_winners++] = t_players[i];
 			}
 		}
 		if (ct_players[i] != 0) {
@@ -95,35 +93,69 @@ printLeaders() {
 			if (points > ct_points) {
 				ct_winners[0] = ct_players[i];
 				ct_points = points;
-				ct_index = 1;
+				ct_num_winners = 1;
 			} else if (points == ct_points) {
-				ct_winners[ct_index++] = ct_players[i];
+				ct_winners[ct_num_winners++] = ct_players[i];
 			}
 		}
 	}
+	if (end_of_game)
+		print_winners(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+	else
+		print_leaders(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+}
+
+print_leaders(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners, ct_points) {
 	if (t_points > 0) {
-		if (t_index == 1) {
+		if (t_num_winners == 1) {
 			if (t_points == 1)
 				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i point!{N}", GetName(t_winners[0]), t_points);
 			else
 				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i points!{N}", GetName(t_winners[0]), t_points);
-		} else if (t_index > 1) {
-			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_index, t_points));
+		} else if (t_num_winners > 1) {
+			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_num_winners, t_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{R}No one on Terrorists has scored any points yet.{N}");
 	}
 	if (ct_points > 0) {
-		if (ct_index == 1) {
+		if (ct_num_winners == 1) {
 			if (ct_points == 1)
 				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i point!{N}", GetName(ct_winners[0]), ct_points);
 			else
 				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i points!{N}", GetName(ct_winners[0]), ct_points);
-		} else if (ct_index > 1) {
-			Client_PrintToChatAll(false, "{B}Tie between %s{N}", format_tie_message(ct_winners, ct_index, ct_points));
+		} else if (ct_num_winners > 1) {
+			Client_PrintToChatAll(false, "{B}Tie between %s{N}", format_tie_message(ct_winners, ct_num_winners, ct_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{B}No one on CT has scored any points yet.{N}");
+	}
+}
+
+print_winners(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners, ct_points) {
+	if (t_points > 0) {
+		if (t_num_winners == 1) {
+			if (t_points == 1)
+				Client_PrintToChatAll(false, "{R}%s has won with %i point!{N}", GetName(t_winners[0]), t_points);
+			else
+				Client_PrintToChatAll(false, "{R}%s has won with %i points!{N}", GetName(t_winners[0]), t_points);
+		} else if (t_num_winners > 1) {
+			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_num_winners, t_points));
+		}
+	} else {
+		Client_PrintToChatAll(false, "{R}No one won on T{N}");
+	}
+	if (ct_points > 0) {
+		if (ct_num_winners == 1) {
+			if (ct_points == 1)
+				Client_PrintToChatAll(false, "{B}%s has won with %i point!{N}", GetName(ct_winners[0]), ct_points);
+			else
+				Client_PrintToChatAll(false, "{B}%s has won with %i points!{N}", GetName(ct_winners[0]), ct_points);
+		} else if (ct_num_winners > 1) {
+			Client_PrintToChatAll(false, "{B}%s have won!{N}", format_tie_message(ct_winners, ct_num_winners, ct_points));
+		}
+	} else {
+		Client_PrintToChatAll(false, "{B}No one won on CT.{N}");
 	}
 }
 
@@ -134,8 +166,20 @@ start() {
 }
 
 stop() {
-	started = false;
-	Client_PrintToChatAll(false, "StatTrak Night has ended");
+	if (started) {
+		new players[MaxClients];
+		Client_Get(players, CLIENTFILTER_INGAME);
+		for (new i; i < MaxClients; i++) {
+			if (Client_IsValid(players[i]))
+				SetClientCookie(players[i], cookie_points, "0");
+		}
+		started = false;
+		Client_PrintToChatAll(false, "StatTrak Night has ended");
+	}
+}
+
+public void Event_GameStart(Event event, const char[] name, bool dontBroadcast) {
+	stop();
 }
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
@@ -144,7 +188,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
-		printLeaders();
+		calc_winners();
 		Client_PrintToChatAll(false, "{B}%s{N} and \x09%s\x01 are the targets!", GetName(CT_TARGET), GetName(T_TARGET));
 	}
 }
@@ -206,7 +250,7 @@ char[] GetName(client) {
 
 String:format_tie_message(winners[], size, points) {
 	decl String:str[255];
-	if (size == 1) {
+	if (size == 1)
 		Format(str, sizeof(str), "%s with %i points", GetName(winners[0]), points);
 	} else if (size == 2) {
 		Format(str, sizeof(str), "%s and %s with %i points", GetName(winners[0]), GetName(winners[1]), points);
