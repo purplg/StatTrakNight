@@ -167,15 +167,15 @@ start() {
 
 stop() {
 	if (started) {
-		new players[MaxClients];
-		Client_Get(players, CLIENTFILTER_INGAME);
-		for (new i; i < MaxClients; i++) {
-			if (Client_IsValid(players[i]))
-				SetClientCookie(players[i], cookie_points, "0");
-		}
-		started = false;
-		Client_PrintToChatAll(false, "StatTrak Night has ended");
+	new players[MaxClients];
+	Client_Get(players, CLIENTFILTER_INGAME);
+	for (new i; i < MaxClients; i++) {
+		if (Client_IsValid(players[i]))
+			SetClientCookie(players[i], cookie_points, "0");
 	}
+	started = false;
+	Client_PrintToChatAll(false, "StatTrak Night has ended");
+}
 }
 
 public void Event_GameStart(Event event, const char[] name, bool dontBroadcast) {
@@ -250,7 +250,7 @@ char[] GetName(client) {
 
 String:format_tie_message(winners[], size, points) {
 	decl String:str[255];
-	if (size == 1)
+	if (size == 1) {
 		Format(str, sizeof(str), "%s with %i points", GetName(winners[0]), points);
 	} else if (size == 2) {
 		Format(str, sizeof(str), "%s and %s with %i points", GetName(winners[0]), GetName(winners[1]), points);
