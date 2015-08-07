@@ -109,11 +109,12 @@ print_leaders(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners
 	if (t_points > 0) {
 		if (t_num_winners == 1) {
 			if (t_points == 1)
-				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i point!{N}", GetName(t_winners[0]), t_points);
+				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i %s!{N}", GetName(t_winners[0]), t_points, plural_points(t_points));
 			else
-				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i points!{N}", GetName(t_winners[0]), t_points);
+				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i %s!{N}", GetName(t_winners[0]), t_points, plural_points(t_points));
 		} else if (t_num_winners > 1) {
-			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_num_winners, t_points));
+			Client_PrintToChatAll(false, "{R}Tie between %s with %i %s!{N}",
+				format_tie_message(t_winners, t_num_winners), t_points, plural_points(t_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{R}No one on Terrorists has scored any points yet.{N}");
@@ -121,11 +122,14 @@ print_leaders(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners
 	if (ct_points > 0) {
 		if (ct_num_winners == 1) {
 			if (ct_points == 1)
-				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i point!{N}", GetName(ct_winners[0]), ct_points);
+				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i %s!{N}",
+					GetName(ct_winners[0]), ct_points, plural_points(ct_points));
 			else
-				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i points!{N}", GetName(ct_winners[0]), ct_points);
+				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i %s!{N}",
+					GetName(ct_winners[0]), ct_points, plural_points(ct_points));
 		} else if (ct_num_winners > 1) {
-			Client_PrintToChatAll(false, "{B}Tie between %s{N}", format_tie_message(ct_winners, ct_num_winners, ct_points));
+			Client_PrintToChatAll(false, "{B}Tie between %s{N}",
+				format_tie_message(ct_winners, ct_num_winners), ct_points, plural_points(ct_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{B}No one on CT has scored any points yet.{N}");
@@ -135,24 +139,22 @@ print_leaders(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners
 print_winners(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners, ct_points) {
 	if (t_points > 0) {
 		if (t_num_winners == 1) {
-			if (t_points == 1)
-				Client_PrintToChatAll(false, "{R}%s has won with %i point!{N}", GetName(t_winners[0]), t_points);
-			else
-				Client_PrintToChatAll(false, "{R}%s has won with %i points!{N}", GetName(t_winners[0]), t_points);
+			Client_PrintToChatAll(false, "{R}%s has won with %i %s!{N}",
+				GetName(t_winners[0]), t_points, plural_points(t_points));
 		} else if (t_num_winners > 1) {
-			Client_PrintToChatAll(false, "{R}Tie between %s{N}", format_tie_message(t_winners, t_num_winners, t_points));
+			Client_PrintToChatAll(false, "{R}Tie between %s with %i %s{N}",
+				format_tie_message(t_winners, t_num_winners), t_points, plural_points(t_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{R}No one won on T{N}");
 	}
 	if (ct_points > 0) {
 		if (ct_num_winners == 1) {
-			if (ct_points == 1)
-				Client_PrintToChatAll(false, "{B}%s has won with %i point!{N}", GetName(ct_winners[0]), ct_points);
-			else
-				Client_PrintToChatAll(false, "{B}%s has won with %i points!{N}", GetName(ct_winners[0]), ct_points);
+			Client_PrintToChatAll(false, "{B}%s has won with %i %s!{N}",
+				GetName(ct_winners[0]), ct_points, plural_points(ct_points));
 		} else if (ct_num_winners > 1) {
-			Client_PrintToChatAll(false, "{B}%s have won!{N}", format_tie_message(ct_winners, ct_num_winners, ct_points));
+			Client_PrintToChatAll(false, "{B}Tie between %s with %i %s!{N}",
+				format_tie_message(ct_winners, ct_num_winners), ct_points, plural_points(ct_points));
 		}
 	} else {
 		Client_PrintToChatAll(false, "{B}No one won on CT.{N}");
@@ -203,20 +205,12 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 		if (victim == CT_TARGET) {
 			new points = addPoint(attacker);
-			if (points == 1)
-				Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i point){N}",
-					GetName(victim), GetName(attacker), points);
-			else
-				Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i points){N}",
-					GetName(victim), GetName(attacker), points);
+			Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i %s){N}",
+				GetName(victim), GetName(attacker), points, plural_points(points));
 		} else if (victim == T_TARGET) {
 			new points = addPoint(attacker);
-			if (points == 1)
-				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i point){N}",
-					GetName(victim), GetName(attacker), points);
-			else
-				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i points){N}",
-					GetName(victim), GetName(attacker), points);
+				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i %s){N}",
+					GetName(victim), GetName(attacker), points, plural_points(points));
 		}
 	}
 }
@@ -248,18 +242,26 @@ char[] GetName(client) {
 	return name;
 }
 
-String:format_tie_message(winners[], size, points) {
+plural_points(num) {
+	new String:str[6] = "point";
+	if (num > 1) {
+		str = "points";
+	}
+	return str;
+}
+
+String:format_tie_message(winners[], size) {
 	decl String:str[255];
 	if (size == 1) {
-		Format(str, sizeof(str), "%s with %i points", GetName(winners[0]), points);
+		Format(str, sizeof(str), "%s", GetName(winners[0]));
 	} else if (size == 2) {
-		Format(str, sizeof(str), "%s and %s with %i points", GetName(winners[0]), GetName(winners[1]), points);
+		Format(str, sizeof(str), "%s and %s", GetName(winners[0]), GetName(winners[1]));
 	} else {
 		Format(str, sizeof(str), "%s, %s", GetName(winners[0]), GetName(winners[1]));
 		for (new i = 2; i < size-1; i++) {
 			Format(str, sizeof(str), "%s, %s", str, GetName(winners[i]));
 		}
-		Format(str, sizeof(str), "%s, and %s with %i points", str, GetName(winners[size-1]), points);
+		Format(str, sizeof(str), "%s, and %s", str, GetName(winners[size-1]));
 	}
 	return str;
 }
