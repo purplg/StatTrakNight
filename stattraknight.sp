@@ -13,7 +13,7 @@ public Plugin myinfo =
 	name = "StatTrak Night",
 	author = "Ben Whitley",
 	description = "A plugin to automate StatTrak Night events",
-	version = "0.9",
+	version = "0.9.1",
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
@@ -108,63 +108,56 @@ calc_winners(bool:end_of_game=false) {
 print_leaders(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners, ct_points) {
 	if (t_points > 0) {
 		if (t_num_winners == 1) {
-			if (t_points == 1)
-				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i %s!{N}", GetName(t_winners[0]), t_points, plural_points(t_points));
-			else
-				Client_PrintToChatAll(false, "{R}%s is leading the Ts with %i %s!{N}", GetName(t_winners[0]), t_points, plural_points(t_points));
+			Client_PrintToChatAll(false, "[ST] \x09%s is leading the Ts with %i %s!", GetName(t_winners[0]), t_points, plural_points(t_points));
 		} else if (t_num_winners > 1) {
-			Client_PrintToChatAll(false, "{R}Tie between %s with %i %s!{N}",
+			Client_PrintToChatAll(false, "[ST] \x09%s are leading with %i %s!",
 				format_tie_message(t_winners, t_num_winners), t_points, plural_points(t_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "{R}No one on Terrorists has scored any points yet.{N}");
+		Client_PrintToChatAll(false, "[ST] \x09No one on Terrorists has scored any points yet.");
 	}
 	if (ct_points > 0) {
 		if (ct_num_winners == 1) {
-			if (ct_points == 1)
-				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i %s!{N}",
-					GetName(ct_winners[0]), ct_points, plural_points(ct_points));
-			else
-				Client_PrintToChatAll(false, "{B}%s is leading the CTs with %i %s!{N}",
-					GetName(ct_winners[0]), ct_points, plural_points(ct_points));
+			Client_PrintToChatAll(false, "[ST] \x0D%s is leading the CTs with %i %s!",
+				GetName(ct_winners[0]), ct_points, plural_points(ct_points));
 		} else if (ct_num_winners > 1) {
-			Client_PrintToChatAll(false, "{B}Tie between %s{N}",
+			Client_PrintToChatAll(false, "[ST] \x0D%s are leading with %i %s",
 				format_tie_message(ct_winners, ct_num_winners), ct_points, plural_points(ct_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "{B}No one on CT has scored any points yet.{N}");
+		Client_PrintToChatAll(false, "[ST] \x0DNo one on CT has scored any points yet.");
 	}
 }
 
 print_winners(t_winners[], t_num_winners, t_points, ct_winners[], ct_num_winners, ct_points) {
 	if (t_points > 0) {
 		if (t_num_winners == 1) {
-			Client_PrintToChatAll(false, "{R}%s has won with %i %s!{N}",
+			Client_PrintToChatAll(false, "[ST] \x09%s won with %i %s!",
 				GetName(t_winners[0]), t_points, plural_points(t_points));
 		} else if (t_num_winners > 1) {
-			Client_PrintToChatAll(false, "{R}Tie between %s with %i %s{N}",
+			Client_PrintToChatAll(false, "[ST] \x09%s won with %i %s",
 				format_tie_message(t_winners, t_num_winners), t_points, plural_points(t_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "{R}No one won on T{N}");
+		Client_PrintToChatAll(false, "[ST] \x09No one won on T");
 	}
 	if (ct_points > 0) {
 		if (ct_num_winners == 1) {
-			Client_PrintToChatAll(false, "{B}%s has won with %i %s!{N}",
+			Client_PrintToChatAll(false, "[ST] \x0D%s won with %i %s!",
 				GetName(ct_winners[0]), ct_points, plural_points(ct_points));
 		} else if (ct_num_winners > 1) {
-			Client_PrintToChatAll(false, "{B}Tie between %s with %i %s!{N}",
+			Client_PrintToChatAll(false, "[ST] \x0D%s won with %i %s!",
 				format_tie_message(ct_winners, ct_num_winners), ct_points, plural_points(ct_points));
 		}
 	} else {
-		Client_PrintToChatAll(false, "{B}No one won on CT.{N}");
+		Client_PrintToChatAll(false, "[ST] \x0DNo one won on CT.");
 	}
 }
 
 start() {
 	event_starttime = GetTime();
 	started = true;
-	Client_PrintToChatAll(false, "Starting StatTrak Night next round");
+	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round");
 }
 
 stop() {
@@ -176,7 +169,7 @@ stop() {
 				SetClientCookie(players[i], cookie_points, "0");
 		}
 		started = false;
-		Client_PrintToChatAll(false, "StatTrak Night has ended");
+		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
 	}
 }
 
@@ -186,12 +179,13 @@ public void Event_GameStart(Event event, const char[] name, bool dontBroadcast) 
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
+		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
 		calc_winners();
-		Client_PrintToChatAll(false, "{B}%s{N} and \x09%s\x01 are the targets!", GetName(CT_TARGET), GetName(T_TARGET));
+		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
 	}
 }
 
@@ -205,12 +199,12 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 		if (victim == CT_TARGET) {
 			new points = addPoint(attacker);
-			Client_PrintToChatAll(false, "{R}%s was killed by %s! (%i %s){N}",
+			Client_PrintToChatAll(false, "[ST] \x09%s was killed by %s! (%i %s)",
 				GetName(victim), GetName(attacker), points, plural_points(points));
 		} else if (victim == T_TARGET) {
 			new points = addPoint(attacker);
-				Client_PrintToChatAll(false, "{B}%s was killed by %s! (%i %s){N}",
-					GetName(victim), GetName(attacker), points, plural_points(points));
+			Client_PrintToChatAll(false, "[ST] \x0D%s was killed by %s! (%i %s)",
+				GetName(victim), GetName(attacker), points, plural_points(points));
 		}
 	}
 }
@@ -243,7 +237,7 @@ char[] GetName(client) {
 	return name;
 }
 
-plural_points(num) {
+String:plural_points(num) {
 	new String:str[6] = "point";
 	if (num > 1) {
 		str = "points";
