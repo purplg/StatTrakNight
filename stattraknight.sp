@@ -185,7 +185,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
 		calc_winners();
-		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets!", GetName(CT_TARGET), GetName(T_TARGET));
+		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
 	}
 }
 
