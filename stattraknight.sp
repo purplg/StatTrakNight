@@ -169,15 +169,15 @@ start() {
 
 stop() {
 	if (started) {
-	new players[MaxClients];
-	Client_Get(players, CLIENTFILTER_INGAME);
-	for (new i; i < MaxClients; i++) {
-		if (Client_IsValid(players[i]))
-			SetClientCookie(players[i], cookie_points, "0");
+		new players[MaxClients];
+		Client_Get(players, CLIENTFILTER_INGAME);
+		for (new i; i < MaxClients; i++) {
+			if (Client_IsValid(players[i]))
+				SetClientCookie(players[i], cookie_points, "0");
+		}
+		started = false;
+		Client_PrintToChatAll(false, "StatTrak Night has ended");
 	}
-	started = false;
-	Client_PrintToChatAll(false, "StatTrak Night has ended");
-}
 }
 
 public void Event_GameStart(Event event, const char[] name, bool dontBroadcast) {
@@ -217,6 +217,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
+		calc_winners(true);
 		stop();
 	}
 }
