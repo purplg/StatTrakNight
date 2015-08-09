@@ -18,8 +18,8 @@ int addPoint(client) {
 }
 
 char[] GetName(client) {
-	new String:name[16];
-	GetClientName(client, name, 16)
+	new String:name[32];
+	GetClientName(client, name, 32)
 	return name;
 }
 
