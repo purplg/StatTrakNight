@@ -30,3 +30,11 @@ String:plural_points(num) {
 	}
 	return str;
 }
+
+Client_Init(client) {
+	if (Client_IsValid(client)) {
+		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
+			SetClientCookie(client, cookie_points, "0");
+		}
+	}
+}

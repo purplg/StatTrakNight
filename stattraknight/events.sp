@@ -1,7 +1,3 @@
-public void Event_GameStart(Event event, const char[] name, bool dontBroadcast) {
-	stop();
-}
-
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
@@ -34,9 +30,22 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 	}
 }
 
-public void Event_WinPanelMatch(Event event, const char[] name, bool dontBroadcast) {
+public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
 	if (started) {
 		calc_winners(true);
-		stop();
+		reset_cookies();
 	}
+}
+
+/**
+ * When a client joins, this is called when that client receives it's stored cookies from the server.
+ * This function will check to see if the points earned are for the current event, and if not erase them.
+ */
+public void OnClientCookiesCached(client) {
+	Client_Init(client);
+}
+
+
+public OnMapEnd() {
+	reset_cookies();
 }

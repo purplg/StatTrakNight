@@ -23,21 +23,10 @@ public Plugin myinfo =
 
 public void OnPluginStart() {
 	RegAdminCmd("sm_stattrak", Command_StatTrak, ADMFLAG_SLAY, "sm_stattrak [0|1]");
-	HookEvent("cs_match_end_restart", Event_GameStart);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
-	HookEvent("cs_win_panel_match", Event_WinPanelMatch);
+	HookEvent("cs_win_panel_match", Event_EndMatch);
 	cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
-}
-
-/**
- * When a client joins, this is called when that client receives it's stored cookies from the server.
- * This function will check to see if the points earned are for the current event, and if not erase them.
- */
-public void OnClientCookiesCached(client) {
-	if (!started || GetClientCookieTime(client, cookie_points) < event_starttime) {
-		SetClientCookie(client, cookie_points, "0");
-	}
 }
 
 public Action:Command_StatTrak(client, args) {
@@ -68,15 +57,24 @@ start() {
 
 stop() {
 	if (started) {
-		new players[MaxClients];
-		Client_Get(players, CLIENTFILTER_INGAME);
-		for (new i; i < MaxClients; i++) {
-			if (Client_IsValid(players[i])) {
-				SetClientCookie(players[i], cookie_points, "0");
-			}
-		}
+		reset_cookies();
 		started = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
+	}
+}
+
+reset_cookies() {
+	new
+		size = Client_GetCount(),
+		players[size];
+	Client_Get(players, CLIENTFILTER_INGAME);
+
+	event_starttime = GetTime();
+
+	for (new i; i < size; i++) {
+		if (Client_IsValid(players[i])) {
+			SetClientCookie(players[i], cookie_points, "0");
+		}
 	}
 }
 
