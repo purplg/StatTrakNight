@@ -26,6 +26,7 @@ public void OnPluginStart() {
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_EndMatch);
+	HookEvent("bot_takeover", Event_BotTakeover);
 	cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
 }
 

@@ -37,6 +37,19 @@ public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
 	}
 }
 
+public void Event_BotTakeover(Event event, const char[] name, bool dontBroadcast) {
+	int bot = GetClientOfUserId(GetEventInt(event, "botid"));
+
+	if (bot == T_TARGET) {
+		int client = GetClientOfUserId(GetEventInt(event, "userid"));
+		T_TARGET = client;
+		Beacon(T_TARGET);
+	} else if(bot == CT_TARGET) {
+		int client = GetClientOfUserId(GetEventInt(event, "userid"));
+		CT_TARGET = client;
+		Beacon(CT_TARGET);
+	}
+}
 /**
  * When a client joins, this is called when that client receives it's stored cookies from the server.
  * This function will check to see if the points earned are for the current event, and if not erase them.
