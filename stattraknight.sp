@@ -64,6 +64,7 @@ start() {
 	event_starttime = GetTime();
 	started = true;
 	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round");
+	calc_winners();
 }
 
 stop() {
@@ -71,8 +72,9 @@ stop() {
 		new players[MaxClients];
 		Client_Get(players, CLIENTFILTER_INGAME);
 		for (new i; i < MaxClients; i++) {
-			if (Client_IsValid(players[i]))
+			if (Client_IsValid(players[i])) {
 				SetClientCookie(players[i], cookie_points, "0");
+			}
 		}
 		started = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
@@ -80,50 +82,36 @@ stop() {
 }
 
 calc_winners(bool:end_of_game=false) {
-	new t_size = Team_GetClientCount(2);
-	new ct_size = Team_GetClientCount(3);
-	new size = t_size;
-	if (ct_size > t_size) size = ct_size;
 
-	new t_players[t_size];
-	new ct_players[ct_size];
-	Client_Get(t_players, CLIENTFILTER_TEAMONE);
-	Client_Get(ct_players, CLIENTFILTER_TEAMTWO);
+	new
+		size = Client_GetCount(),
+		num_winners,
+		points,
+		topPoints;
 
-	new t_winners[t_size];
-	new t_num_winners;
-	new t_points;
-	new ct_winners[ct_size];
-	new ct_num_winners;
-	new ct_points;
-	new points;
+	decl
+		players[size],
+		winners[size];
 
-	for (new i = 0; i < size; i++) {
-		if (t_players[i] != 0) {
-			points = getPoints(t_players[i]);
+	Client_Get(players, CLIENTFILTER_INGAME);
+
+	for (new i; i < size; i++) {
+		if (players[i] != 0) {
+			points = getPoints(players[i]);
 			if (points == 0) continue;
-			if (points > t_points) {
-				t_winners[0] = t_players[i];
-				t_points = points;
-				t_num_winners = 1;
-			} else if (points == t_points) {
-				t_winners[t_num_winners++] = t_players[i];
-			}
-		}
-		if (ct_players[i] != 0) {
-			points = getPoints(ct_players[i]);
-			if (points == 0) continue;
-			if (points > ct_points) {
-				ct_winners[0] = ct_players[i];
-				ct_points = points;
-				ct_num_winners = 1;
-			} else if (points == ct_points) {
-				ct_winners[ct_num_winners++] = ct_players[i];
+
+			if (points > topPoints) {
+				winners[0] = players[i];
+				topPoints = points;
+				num_winners = 1;
+			} else if (points == topPoints) {
+				winners[num_winners++] = players[i];
 			}
 		}
 	}
+
 	if (end_of_game)
-		print_winners(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+		print_winners(winners, num_winners, topPoints);
 	else
-		print_leaders(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+		print_leaders(winners, num_winners, topPoints);
 }
