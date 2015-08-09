@@ -22,7 +22,7 @@ public Plugin myinfo =
 #include "stattraknight/announcements.sp"
 
 public void OnPluginStart() {
-	RegConsoleCmd("sm_stattrak", Command_StatTrak);
+	RegAdminCmd("sm_stattrak", Command_StatTrak, ADMFLAG_SLAY, "sm_stattrak [0|1]");
 	HookEvent("cs_match_end_restart", Event_GameStart);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
