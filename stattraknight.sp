@@ -22,11 +22,12 @@ public Plugin myinfo =
 #include "stattraknight/events.sp"
 #include "stattraknight/util.sp"
 #include "stattraknight/announcements.sp"
+#include "stattraknight/menu.sp"
 
 public void OnPluginStart() {
 	winners = CreateArray(1, 1);
 
-	RegAdminCmd("sm_stattrak", Command_StatTrak, ADMFLAG_SLAY, "sm_stattrak [0|1]");
+	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0|1]");
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_EndMatch);
@@ -37,7 +38,11 @@ public void OnPluginStart() {
 public Action:Command_StatTrak(client, args) {
 	char arg1[32];
 	GetCmdArg(1, arg1, sizeof(arg1));
-	if (arg1[0] != 0) {
+	if (GetCmdArgs() > 0) {
+		if (Client_IsValid(client) && !Client_HasAdminFlags(client, ADMFLAG_SLAY)) {
+			Client_Reply(client, "[SM] %t", "No Access");
+			return Plugin_Handled;
+		}
 		switch (StringToInt(arg1)) {
 			case 1: {
 				stop();
@@ -48,9 +53,8 @@ public Action:Command_StatTrak(client, args) {
 			}
 		}
 	} else {
-		ReplyToCommand(client, "Usage: sm_stattrak [0|1]");
+		showScores(client);
 	}
-
 	return Plugin_Handled;
 }
 
