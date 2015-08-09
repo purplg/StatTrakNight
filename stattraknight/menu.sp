@@ -13,9 +13,7 @@ public MenuHandler(Handle:menu, MenuAction:action, param1, param2) {
 showScores(client) {
 	new Handle:menu = CreateMenu(MenuHandler);
 	SetMenuTitle(menu, "StatTrak Scoreboard");
-	AddMenuItem(menu, "1", "PurplG - 4pts");
-	AddMenuItem(menu, "2", "Ted - 4pts");
-	AddMenuItem(menu, "3", "Don - 3pts");
+	AddMenuItem(menu, "", "Coming soon...");
 	SetMenuExitButton(menu, true);
 	DisplayMenu(menu, client, 20);
 }

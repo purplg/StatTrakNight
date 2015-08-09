@@ -53,7 +53,9 @@ public Action:Command_StatTrak(client, args) {
 			}
 		}
 	} else {
-		showScores(client);
+//		showScores(client);
+		new points = getPoints(client);
+		Client_PrintToChat(client, false, "[ST] \x04You have %i %s.", points, plural_points(points));
 	}
 	return Plugin_Handled;
 }

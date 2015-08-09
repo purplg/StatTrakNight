@@ -24,9 +24,9 @@ char[] GetName(client) {
 }
 
 String:plural_points(num) {
-	new String:str[6] = "point";
-	if (num > 1) {
-		str = "points";
+	new String:str[6] = "points";
+	if (num == 1) {
+		str[5] = 0;
 	}
 	return str;
 }
