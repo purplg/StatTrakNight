@@ -13,7 +13,7 @@ public Plugin myinfo =
 	name = "StatTrak Night",
 	author = "Ben Whitley",
 	description = "A plugin to automate StatTrak Night events",
-	version = "0.9.1",
+	version = "0.9.4",
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
@@ -23,21 +23,11 @@ public Plugin myinfo =
 
 public void OnPluginStart() {
 	RegAdminCmd("sm_stattrak", Command_StatTrak, ADMFLAG_SLAY, "sm_stattrak [0|1]");
-	HookEvent("cs_match_end_restart", Event_GameStart);
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
-	HookEvent("cs_win_panel_match", Event_WinPanelMatch);
+	HookEvent("cs_win_panel_match", Event_EndMatch);
+	HookEvent("bot_takeover", Event_BotTakeover);
 	cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
-}
-
-/**
- * When a client joins, this is called when that client receives it's stored cookies from the server.
- * This function will check to see if the points earned are for the current event, and if not erase them.
- */
-public void OnClientCookiesCached(client) {
-	if (!started || GetClientCookieTime(client, cookie_points) < event_starttime) {
-		SetClientCookie(client, cookie_points, "0");
-	}
 }
 
 public Action:Command_StatTrak(client, args) {
@@ -68,62 +58,58 @@ start() {
 
 stop() {
 	if (started) {
-		new players[MaxClients];
-		Client_Get(players, CLIENTFILTER_INGAME);
-		for (new i; i < MaxClients; i++) {
-			if (Client_IsValid(players[i]))
-				SetClientCookie(players[i], cookie_points, "0");
-		}
+		reset_cookies();
 		started = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
 	}
 }
 
-calc_winners(bool:end_of_game=false) {
-	new t_size = Team_GetClientCount(2);
-	new ct_size = Team_GetClientCount(3);
-	new size = t_size;
-	if (ct_size > t_size) size = ct_size;
+reset_cookies() {
+	new
+		size = Client_GetCount(),
+		players[size];
+	Client_Get(players, CLIENTFILTER_INGAME);
 
-	new t_players[t_size];
-	new ct_players[ct_size];
-	Client_Get(t_players, CLIENTFILTER_TEAMONE);
-	Client_Get(ct_players, CLIENTFILTER_TEAMTWO);
+	event_starttime = GetTime();
 
-	new t_winners[t_size];
-	new t_num_winners;
-	new t_points;
-	new ct_winners[ct_size];
-	new ct_num_winners;
-	new ct_points;
-	new points;
-
-	for (new i = 0; i < size; i++) {
-		if (t_players[i] != 0) {
-			points = getPoints(t_players[i]);
-			if (points == 0) continue;
-			if (points > t_points) {
-				t_winners[0] = t_players[i];
-				t_points = points;
-				t_num_winners = 1;
-			} else if (points == t_points) {
-				t_winners[t_num_winners++] = t_players[i];
-			}
+	for (new i; i < size; i++) {
+		if (Client_IsValid(players[i])) {
+			SetClientCookie(players[i], cookie_points, "0");
 		}
-		if (ct_players[i] != 0) {
-			points = getPoints(ct_players[i]);
+	}
+}
+
+calc_winners(bool:end_of_game=false) {
+
+	new
+		size = Client_GetCount(),
+		num_winners,
+		points,
+		topPoints;
+
+	decl
+		players[size],
+		winners[size];
+
+	Client_Get(players, CLIENTFILTER_INGAME);
+
+	for (new i; i < size; i++) {
+		if (players[i] != 0) {
+			points = getPoints(players[i]);
 			if (points == 0) continue;
-			if (points > ct_points) {
-				ct_winners[0] = ct_players[i];
-				ct_points = points;
-				ct_num_winners = 1;
-			} else if (points == ct_points) {
-				ct_winners[ct_num_winners++] = ct_players[i];
+
+			if (points > topPoints) {
+				winners[0] = players[i];
+				topPoints = points;
+				num_winners = 1;
+			} else if (points == topPoints) {
+				winners[num_winners++] = players[i];
 			}
 		}
 	}
+
 	if (end_of_game)
-		print_winners(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+		print_winners(winners, num_winners, topPoints);
 	else
-		print_leaders(t_winners, t_num_winners, t_points, ct_winners, ct_num_winners, ct_points);
+		print_leaders(winners, num_winners, topPoints);
 }

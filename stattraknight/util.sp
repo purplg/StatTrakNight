@@ -18,8 +18,8 @@ int addPoint(client) {
 }
 
 char[] GetName(client) {
-	new String:name[16];
-	GetClientName(client, name, 16)
+	new String:name[MAX_NAME_LENGTH];
+	GetClientName(client, name, MAX_NAME_LENGTH);
 	return name;
 }
 
@@ -29,4 +29,12 @@ String:plural_points(num) {
 		str = "points";
 	}
 	return str;
+}
+
+Client_Init(client) {
+	if (Client_IsValid(client)) {
+		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
+			SetClientCookie(client, cookie_points, "0");
+		}
+	}
 }
