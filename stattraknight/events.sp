@@ -1,17 +1,23 @@
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
-	if (started) {
+	if (running) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
-		calc_winners();
+
+		new
+			size = Client_GetCount(),
+			winners[size],
+			points;
+		update_winners();
+		print_leaders();
 		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
 	}
 }
 
 public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-	if (started) {
+	if (running) {
 		int victim = GetClientOfUserId(GetEventInt(event, "userid"));
 		int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 
@@ -31,8 +37,13 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 }
 
 public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
-	if (started) {
-		calc_winners(true);
+	if (running) {
+		new
+			size = Client_GetCount(),
+			winners[size],
+			points;
+		update_winners();
+		print_winners();
 		reset_cookies();
 	}
 }

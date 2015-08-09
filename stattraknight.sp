@@ -3,10 +3,12 @@
 #include <smlib>
 
 new T_TARGET, CT_TARGET;
-new bool:started = false;
+new bool:running = false;
 
 new event_starttime;
 new Handle:cookie_points;
+new ArrayList:winners;
+new topPoints;
 
 public Plugin myinfo =
 {
@@ -22,6 +24,8 @@ public Plugin myinfo =
 #include "stattraknight/announcements.sp"
 
 public void OnPluginStart() {
+	winners = CreateArray(1, 1);
+
 	RegAdminCmd("sm_stattrak", Command_StatTrak, ADMFLAG_SLAY, "sm_stattrak [0|1]");
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("player_death", Event_PlayerDeath);
@@ -52,14 +56,14 @@ public Action:Command_StatTrak(client, args) {
 
 start() {
 	event_starttime = GetTime();
-	started = true;
+	running = true;
 	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round");
 }
 
 stop() {
-	if (started) {
+	if (running) {
 		reset_cookies();
-		started = false;
+		running = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
 	}
 }
@@ -79,37 +83,25 @@ reset_cookies() {
 	}
 }
 
-calc_winners(bool:end_of_game=false) {
-
-	new
-		size = Client_GetCount(),
-		num_winners,
-		points,
-		topPoints;
-
-	decl
-		players[size],
-		winners[size];
-
+update_winners() {
+	new	size = Client_GetCount(),
+		players[size];
 	Client_Get(players, CLIENTFILTER_INGAME);
 
+	ClearArray(winners);
+	topPoints = 0;
 	for (new i; i < size; i++) {
 		if (players[i] != 0) {
-			points = getPoints(players[i]);
+			new points = getPoints(players[i]);
 			if (points == 0) continue;
 
 			if (points > topPoints) {
-				winners[0] = players[i];
+				ClearArray(winners);
+				PushArrayCell(winners, players[i]);
 				topPoints = points;
-				num_winners = 1;
 			} else if (points == topPoints) {
-				winners[num_winners++] = players[i];
+				PushArrayCell(winners, players[i]);
 			}
 		}
 	}
-
-	if (end_of_game)
-		print_winners(winners, num_winners, topPoints);
-	else
-		print_leaders(winners, num_winners, topPoints);
 }
