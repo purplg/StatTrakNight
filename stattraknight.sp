@@ -64,7 +64,6 @@ start() {
 	event_starttime = GetTime();
 	started = true;
 	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round");
-	calc_winners();
 }
 
 stop() {
