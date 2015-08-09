@@ -6,10 +6,6 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Beacon(T_TARGET);
 		Beacon(CT_TARGET);
 
-		new
-			size = Client_GetCount(),
-			winners[size],
-			points;
 		update_winners();
 		print_leaders();
 		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
@@ -38,10 +34,6 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
 	if (running) {
-		new
-			size = Client_GetCount(),
-			winners[size],
-			points;
 		update_winners();
 		print_winners();
 		reset_cookies();
