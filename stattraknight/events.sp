@@ -24,10 +24,12 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 			new points = addPoint(attacker);
 			Client_PrintToChatAll(false, "[ST] \x09%s was killed by %s! (%i %s)",
 				GetName(victim), GetName(attacker), points, plural_points(points));
+			CT_TARGET = -1;
 		} else if (victim == T_TARGET) {
 			new points = addPoint(attacker);
 			Client_PrintToChatAll(false, "[ST] \x0D%s was killed by %s! (%i %s)",
 				GetName(victim), GetName(attacker), points, plural_points(points));
+			T_TARGET = -1;
 		}
 	}
 }
