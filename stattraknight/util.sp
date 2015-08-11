@@ -2,21 +2,6 @@ Beacon(name) {
 	InsertServerCommand("sm_beacon %s", GetName(name));
 }
 
-int getPoints(client) {
-		decl String:strBuffer[3];
-		GetClientCookie(client, cookie_points, strBuffer, 3);
-		return StringToInt(strBuffer);
-}
-
-int addPoint(client) {
-	decl String:strBuffer[3];
-	GetClientCookie(client, cookie_points, strBuffer, 3);
-	new points = StringToInt(strBuffer) + 1;
-	IntToString(points, strBuffer, 3);
-	SetClientCookie(client, cookie_points, strBuffer);
-	return points;
-}
-
 char[] GetName(client) {
 	new String:name[MAX_NAME_LENGTH];
 	GetClientName(client, name, MAX_NAME_LENGTH);
@@ -35,6 +20,21 @@ Client_Init(client) {
 	if (Client_IsValid(client)) {
 		if (GetClientCookieTime(client, cookie_points) < event_starttime) {
 			SetClientCookie(client, cookie_points, "0");
+		}
+	}
+}
+
+reset_cookies() {
+	new
+		size = Client_GetCount(),
+		players[size];
+	Client_Get(players, CLIENTFILTER_INGAME);
+
+	event_starttime = GetTime();
+
+	for (new i; i < size; i++) {
+		if (Client_IsValid(players[i])) {
+			SetClientCookie(players[i], cookie_points, "0");
 		}
 	}
 }
