@@ -22,6 +22,7 @@ public Plugin myinfo =
 #include "stattraknight/util.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/menu.sp"
+#include "funcommands/beacon.sp"
 
 public void OnPluginStart() {
 	winners = CreateArray(1, 1);

@@ -3,8 +3,8 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
-		Beacon(T_TARGET);
-		Beacon(CT_TARGET);
+		CreateBeacon(T_TARGET);
+		CreateBeacon(CT_TARGET);
 
 		update_winners();
 		print_leaders();
