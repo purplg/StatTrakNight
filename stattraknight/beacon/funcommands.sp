@@ -36,21 +36,8 @@
 #include <sdktools>
 #undef REQUIRE_PLUGIN
 
-public Plugin:myinfo =
-{
-	name = "Fun Commands",
-	author = "AlliedModders LLC",
-	description = "Fun Commands",
-	version = SOURCEMOD_VERSION,
-	url = "http://www.sourcemod.net/"
-};
-
 // Sounds
 new String:g_BlipSound[PLATFORM_MAX_PATH];
-new String:g_BeepSound[PLATFORM_MAX_PATH];
-new String:g_FinalSound[PLATFORM_MAX_PATH];
-new String:g_BoomSound[PLATFORM_MAX_PATH];
-new String:g_FreezeSound[PLATFORM_MAX_PATH];
 
 // Following are model indexes for temp entities
 new g_BeamSprite        = -1;
@@ -73,13 +60,10 @@ new g_Serial_Gen = 0;
 
 Funcommands_OnPluginStart()
 {
-	if (FindPluginByFile("basefuncommands.smx") != null)
+	if (FindPluginByFile("funcommands.smx") == null)
 	{
-		ThrowError("This plugin replaces basefuncommands.  You cannot run both at once.");
+		ThrowError("This plugin requires funcommands.  You cannot run both at once.");
 	}
-
-	LoadTranslations("common.phrases");
-	LoadTranslations("funcommands.phrases");
 
 	RegisterCvars( );
 	HookEvents( );
@@ -128,26 +112,6 @@ public OnMapStart()
 		PrecacheSound(g_BlipSound, true);
 	}
 
-	if (GameConfGetKeyValue(gameConfig, "SoundBeep", g_BeepSound, sizeof(g_BeepSound)) && g_BeepSound[0])
-	{
-		PrecacheSound(g_BeepSound, true);
-	}
-
-	if (GameConfGetKeyValue(gameConfig, "SoundFinal", g_FinalSound, sizeof(g_FinalSound)) && g_FinalSound[0])
-	{
-		PrecacheSound(g_FinalSound, true);
-	}
-
-	if (GameConfGetKeyValue(gameConfig, "SoundBoom", g_BoomSound, sizeof(g_BoomSound)) && g_BoomSound[0])
-	{
-		PrecacheSound(g_BoomSound, true);
-	}
-
-	if (GameConfGetKeyValue(gameConfig, "SoundFreeze", g_FreezeSound, sizeof(g_FreezeSound)) && g_FreezeSound[0])
-	{
-		PrecacheSound(g_FreezeSound, true);
-	}
-
 	new String:buffer[PLATFORM_MAX_PATH];
 	if (GameConfGetKeyValue(gameConfig, "SpriteBeam", buffer, sizeof(buffer)) && buffer[0])
 	{
@@ -167,7 +131,7 @@ Funcommands_OnMapEnd()
 	KillAllBeacons( );
 }
 
-public Action:Event_RoundEnd(Handle:event,const String:name[],bool:dontBroadcast)
+Funcommands_Event_RoundStart()
 {
 	KillAllBeacons( );
 }

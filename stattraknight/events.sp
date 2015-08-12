@@ -1,4 +1,5 @@
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
+	Funcommands_Event_RoundStart();
 	if (running) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
