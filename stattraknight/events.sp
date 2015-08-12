@@ -3,8 +3,8 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
 		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
-		CreateBeacon(T_TARGET);
-		CreateBeacon(CT_TARGET);
+		PerformBeacon(T_TARGET);
+		PerformBeacon(CT_TARGET);
 
 		update_winners();
 		print_leaders();
@@ -48,11 +48,11 @@ public void Event_BotTakeover(Event event, const char[] name, bool dontBroadcast
 	if (bot == T_TARGET) {
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		T_TARGET = client;
-		Beacon(T_TARGET);
+		PerformBeacon(T_TARGET);
 	} else if(bot == CT_TARGET) {
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		CT_TARGET = client;
-		Beacon(CT_TARGET);
+		PerformBeacon(CT_TARGET);
 	}
 }
 /**
@@ -65,5 +65,6 @@ public void OnClientCookiesCached(client) {
 
 
 public OnMapEnd() {
+	Funcommands_OnMapEnd();
 	reset_cookies();
 }

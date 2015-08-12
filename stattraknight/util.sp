@@ -1,7 +1,3 @@
-Beacon(name) {
-	InsertServerCommand("sm_beacon %s", GetName(name));
-}
-
 char[] GetName(client) {
 	new String:name[MAX_NAME_LENGTH];
 	GetClientName(client, name, MAX_NAME_LENGTH);

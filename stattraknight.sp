@@ -22,9 +22,10 @@ public Plugin myinfo =
 #include "stattraknight/util.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/menu.sp"
-#include "funcommands/beacon.sp"
+#include "stattraknight/beacon/funcommands.sp"
 
 public void OnPluginStart() {
+	Funcommands_OnPluginStart();
 	winners = CreateArray(1, 1);
 
 	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0|1]");
