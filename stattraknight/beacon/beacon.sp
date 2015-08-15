@@ -103,9 +103,7 @@ public Action:Timer_Beacon(Handle:timer, any:value)
 		{
 			TE_SetupBeamRingPoint(vec, 10.0, g_Cvar_BeaconRadius.FloatValue, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, greenColor, 10, 0);
 		}
-		new clients[MAXPLAYERS];
-		Client_Get(clients, CLIENTFILTER_TEAMONE);
-		TE_Send(clients, Team_GetClientCount(1), 0);
+		TE_SendToAll();
 	}
 
 	if (g_BlipSound[0])

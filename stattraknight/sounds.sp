@@ -27,7 +27,6 @@ Sounds_PlayKill(client) {
 		new size = Team_GetClientCount(team);
 		new clients[size];
 		Client_Get(clients, flag);
-		new j = 0;
 		for (new i = 0; i < size; i++) {
 			if (clients[i] == client) {
 				size -= 1;
