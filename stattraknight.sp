@@ -17,16 +17,19 @@ public Plugin myinfo =
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
+#include "stattraknight/beacon/funcommands.sp"
 #include "stattraknight/points.sp"
+#include "stattraknight/sounds.sp"
 #include "stattraknight/events.sp"
 #include "stattraknight/util.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/menu.sp"
-#include "stattraknight/beacon/funcommands.sp"
 
 public void OnPluginStart() {
 	Funcommands_OnPluginStart();
 	winners = CreateArray(1, 1);
+
+	Sounds_Load();
 
 	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0|1]");
 	HookEvent("round_start", Event_RoundStart);
@@ -73,4 +76,8 @@ stop() {
 		running = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
 	}
+}
+
+public OnMapStart() {
+	Funcommands_OnMapStart();
 }

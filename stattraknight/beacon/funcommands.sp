@@ -98,7 +98,9 @@ HookEvents( )
 	}
 }
 
-public OnMapStart()
+public Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {}
+
+Funcommands_OnMapStart()
 {
 	new Handle:gameConfig = LoadGameConfigFile("funcommands.games");
 	if (gameConfig == null)

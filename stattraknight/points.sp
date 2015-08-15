@@ -13,6 +13,7 @@ int addPoint(client) {
 	new points = StringToInt(strBuffer) + 1;
 	IntToString(points, strBuffer, 3);
 	SetClientCookie(client, cookie_points, strBuffer);
+	Sounds_PlayKill(client);
 	return points;
 }
 
