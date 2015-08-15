@@ -2,10 +2,8 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	Funcommands_Event_RoundStart();
 	if (running) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
-		T_TARGET = Client_GetRandom(CLIENTFILTER_TEAMONE | CLIENTFILTER_ALIVE);
-		CT_TARGET = Client_GetRandom(CLIENTFILTER_TEAMTWO | CLIENTFILTER_ALIVE);
-		PerformBeacon(T_TARGET);
-		PerformBeacon(CT_TARGET);
+		T_TARGET = BeaconRandom(2);
+		CT_TARGET = BeaconRandom(3);
 
 		update_winners();
 		print_leaders();
@@ -18,15 +16,24 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		int victim = GetClientOfUserId(GetEventInt(event, "userid"));
 		int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 
-		if (victim == attacker) return;
 		if (!Client_IsValid(attacker)) return;
 
 		if (victim == CT_TARGET) {
+			if (victim == attacker) {
+				CT_TARGET = BeaconRandom(3);
+				Client_PrintToChatAll(false, "[ST] \x0D%s\x01 is the new target.", GetName(CT_TARGET));
+				return;
+			}
 			new points = addPoint(attacker);
 			Client_PrintToChatAll(false, "[ST] \x09%s was killed by %s! (%i %s)",
 				GetName(victim), GetName(attacker), points, plural_points(points));
 			CT_TARGET = -1;
 		} else if (victim == T_TARGET) {
+			if (victim == attacker) {
+				T_TARGET = BeaconRandom(2);
+				Client_PrintToChatAll(false, "[ST] \x09%s\x01 is the new target.", GetName(T_TARGET));
+				return;
+			}
 			new points = addPoint(attacker);
 			Client_PrintToChatAll(false, "[ST] \x0D%s was killed by %s! (%i %s)",
 				GetName(victim), GetName(attacker), points, plural_points(points));

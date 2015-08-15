@@ -67,6 +67,20 @@ PerformBeacon(target)
 	}
 }
 
+BeaconRandom(team) {
+	new flag;
+	if (team == 2) {
+		flag = CLIENTFILTER_TEAMONE;
+	} else if (team == 3) {
+		flag = CLIENTFILTER_TEAMTWO;
+	}
+	if (flag == 0) return -1;
+	flag |= CLIENTFILTER_ALIVE;
+	new target = Client_GetRandom(flag);
+	PerformBeacon(target);
+	return target;
+}
+
 public Action:Timer_Beacon(Handle:timer, any:value)
 {
 	new client = value & 0x7f;
