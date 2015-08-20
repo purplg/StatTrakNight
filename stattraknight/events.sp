@@ -1,5 +1,14 @@
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	Funcommands_Event_RoundStart();
+	if (starting) {
+		starting = false;
+		running = true;
+		stopping = false;
+		event_starttime = GetTime();
+	}
+	if (stopping) {
+		complete_stop();
+	}
 	if (running) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = BeaconRandom(2);
@@ -8,6 +17,19 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		update_winners();
 		print_leaders();
 		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
+	}
+}
+
+public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
+	if (starting) {
+		starting = false;
+		running = true;
+		stopping = false;
+		event_starttime = GetTime();
+		Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Event in 5 seconds...");
+		InsertServerCommand("mp_restartgame 5");
+	} else if (stopping) {
+		complete_stop();
 	}
 }
 
@@ -44,9 +66,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
 	if (running) {
-		update_winners();
-		print_winners();
-		reset_cookies();
+		complete_stop();
 	}
 }
 
@@ -75,4 +95,8 @@ public void OnClientCookiesCached(client) {
 public OnMapEnd() {
 	Funcommands_OnMapEnd();
 	reset_cookies();
+}
+
+public OnMapStart() {
+	Funcommands_OnMapStart();
 }

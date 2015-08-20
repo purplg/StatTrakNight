@@ -3,7 +3,9 @@
 #include <smlib>
 
 new T_TARGET, CT_TARGET;
-new bool:running = false;
+new bool:starting = false,
+	bool:stopping = false,
+	bool:running = false;
 
 new event_starttime;
 new Handle:cookie_points;
@@ -33,6 +35,7 @@ public void OnPluginStart() {
 
 	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0|1]");
 	HookEvent("round_start", Event_RoundStart);
+	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_EndMatch);
 	HookEvent("bot_takeover", Event_BotTakeover);
@@ -49,11 +52,10 @@ public Action:Command_StatTrak(client, args) {
 		}
 		switch (StringToInt(arg1)) {
 			case 1: {
-				stop();
-				start();
+				start(client);
 			}
 			case 0: {
-				stop();
+				stop(client);
 			}
 		}
 	} else {
@@ -64,20 +66,52 @@ public Action:Command_StatTrak(client, args) {
 	return Plugin_Handled;
 }
 
-start() {
-	event_starttime = GetTime();
-	running = true;
-	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round");
-}
-
-stop() {
-	if (running) {
-		reset_cookies();
-		running = false;
-		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended");
+/**
+ * Set a StatTrak Event to start next round
+ *
+ * @param client	The client that called the event to start
+ * @noreturn
+ */
+start(client) {
+	if (starting) {
+		Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+	} else if (stopping) {
+		stopping = false;
+		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night set to continue.");
+	} else if (running) {
+			Client_Reply(client, "[ST] \x04StatTrak event already running.");
+	} else {
+		starting = true;
+		Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round.");
 	}
 }
 
-public OnMapStart() {
-	Funcommands_OnMapStart();
+/**
+ * Stop a StatTrak Event next round
+ *
+ * @param client	The client that called the event to stop
+ * @noreturn
+ */
+stop(client) {
+	if (stopping) {
+		Client_Reply(client, "[ST] \x04StatTrak Event is already set to stop next round.");
+	} else if (starting) {
+		starting = false;
+		Client_PrintToChatAll(false, "[ST] \x04StatTrak Event cancelled for next round.");
+	} else if (running) {
+		stopping = true;
+		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night will end next round.");
+	} else {
+		Client_Reply(client, "[ST] \x04There isn't a StatTrak Event running.");
+	}
+}
+
+complete_stop() {
+	running = false;
+	stopping = false;
+	starting = false;
+	update_winners();
+	print_winners();
+	reset_cookies();
+	Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended.");
 }
