@@ -33,7 +33,7 @@ public void OnPluginStart() {
 
 	Sounds_Load();
 
-	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0|1]");
+	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [start/stop]");
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_death", Event_PlayerDeath);
@@ -50,13 +50,12 @@ public Action:Command_StatTrak(client, args) {
 			Client_Reply(client, "[SM] %t", "No Access");
 			return Plugin_Handled;
 		}
-		switch (StringToInt(arg1)) {
-			case 1: {
-				start(client);
-			}
-			case 0: {
-				stop(client);
-			}
+		if (strcmp("start", arg1, false) == 0) {
+			start(client);
+		} else if (strcmp("stop", arg1, false) == 0) {
+			stop(client);
+		} else {
+			Client_Reply(client, "[ST] Usage: sm_stattrak [start/stop]");
 		}
 	} else {
 //		showScores(client);
