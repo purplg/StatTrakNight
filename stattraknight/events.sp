@@ -47,8 +47,8 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 				return;
 			}
 			new points = addPoint(attacker);
-			Client_PrintToChatAll(false, "[ST] \x09%s was killed by %s! (%i %s)",
-				GetName(victim), GetName(attacker), points, plural_points(points));
+			Client_PrintToChatAll(false, "[ST] \x09%s was killed by %s! (%i point%s)",
+				GetName(victim), GetName(attacker), points, plural(points));
 			CT_TARGET = -1;
 		} else if (victim == T_TARGET) {
 			if (victim == attacker) {
@@ -57,8 +57,8 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 				return;
 			}
 			new points = addPoint(attacker);
-			Client_PrintToChatAll(false, "[ST] \x0D%s was killed by %s! (%i %s)",
-				GetName(victim), GetName(attacker), points, plural_points(points));
+			Client_PrintToChatAll(false, "[ST] \x0D%s was killed by %s! (%i point%s)",
+				GetName(victim), GetName(attacker), points, plural(points));
 			T_TARGET = -1;
 		}
 	}
@@ -90,7 +90,6 @@ public void Event_BotTakeover(Event event, const char[] name, bool dontBroadcast
 public void OnClientCookiesCached(client) {
 	Client_Init(client);
 }
-
 
 public OnMapEnd() {
 	Funcommands_OnMapEnd();

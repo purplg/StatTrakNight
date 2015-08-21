@@ -1,10 +1,10 @@
 print_leaders() {
 	if (topPoints > 0) {
 		if (GetArraySize(winners) == 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s is leading with %i %s!", GetName(GetArrayCell(winners, 0)), topPoints, plural_points(topPoints));
+			Client_PrintToChatAll(false, "[ST] \x04%s is leading with %i point%s!", GetName(GetArrayCell(winners, 0)), topPoints, plural(topPoints));
 		} else if (GetArraySize(winners) > 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s are leading with %i %s!",
-				format_tie_message(), topPoints, plural_points(topPoints));
+			Client_PrintToChatAll(false, "[ST] \x04%s are leading with %i point%s!",
+				format_tie_message(), topPoints, plural(topPoints));
 		}
 	} else {
 		Client_PrintToChatAll(false, "[ST] \x04No one has scored any points yet.");
@@ -14,11 +14,11 @@ print_leaders() {
 print_winners() {
 	if (topPoints > 0) {
 		if (GetArraySize(winners) == 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s won with %i %s!",
-				GetName(GetArrayCell(winners, 0)), topPoints, plural_points(topPoints));
+			Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s!",
+				GetName(GetArrayCell(winners, 0)), topPoints, plural(topPoints));
 		} else if (GetArraySize(winners) > 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s won with %i %s",
-				format_tie_message(), topPoints, plural_points(topPoints));
+			Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s",
+				format_tie_message(), topPoints, plural(topPoints));
 		}
 	} else {
 		Client_PrintToChatAll(false, "[ST] \x04No one won.");

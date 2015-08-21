@@ -33,7 +33,7 @@ public void OnPluginStart() {
 
 	Sounds_Load();
 
-	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [start/stop]");
+	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0/1/start/stop] [time]");
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_death", Event_PlayerDeath);
@@ -43,24 +43,33 @@ public void OnPluginStart() {
 }
 
 public Action:Command_StatTrak(client, args) {
-	char arg1[32];
+	decl
+		String:arg1[32],
+		String:arg2[32];
 	GetCmdArg(1, arg1, sizeof(arg1));
+	GetCmdArg(2, arg2, sizeof(arg2));
 	if (GetCmdArgs() > 0) {
 		if (Client_IsValid(client) && !Client_HasAdminFlags(client, ADMFLAG_SLAY)) {
 			Client_Reply(client, "[SM] %t", "No Access");
 			return Plugin_Handled;
 		}
-		if (strcmp("start", arg1, false) == 0) {
-			start(client);
-		} else if (strcmp("stop", arg1, false) == 0) {
-			stop(client);
+		new time = 0;
+		if (strlen(arg2) > 0) {
+			time = StringToInt(arg2);
+		}
+		if (strcmp("start", arg1, false) == 0
+		|| 	strcmp("1", arg1, false) == 0) {
+			start(client, time);
+		} else if (strcmp("stop", arg1, false) == 0
+		||	strcmp("0", arg1, false) == 0) {
+			stop(client, time);
 		} else {
-			Client_Reply(client, "[ST] Usage: sm_stattrak [start/stop]");
+			Client_Reply(client, "[ST] Usage: sm_stattrak [0/1/start/stop] [time]");
 		}
 	} else {
 //		showScores(client);
 		new points = getPoints(client);
-		Client_PrintToChat(client, false, "[ST] \x04You have %i %s.", points, plural_points(points));
+		Client_PrintToChat(client, false, "[ST] \x04You have %i point%s.", points, plural(points));
 	}
 	return Plugin_Handled;
 }
@@ -69,11 +78,18 @@ public Action:Command_StatTrak(client, args) {
  * Set a StatTrak Event to start next round
  *
  * @param client	The client that called the event to start
+ * @param time		The amount of time to wait to restart game to start event.
+ 					0 = Next round
  * @noreturn
  */
-start(client) {
+start(client, time=0) {
 	if (starting) {
-		Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+		if (time > 0) {
+			Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
+			InsertServerCommand("mp_restartgame %i", time);
+		} else {
+			Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+		}
 	} else if (stopping) {
 		stopping = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night set to continue.");
@@ -81,7 +97,12 @@ start(client) {
 			Client_Reply(client, "[ST] \x04StatTrak event already running.");
 	} else {
 		starting = true;
-		Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Night next round.");
+		if (time > 0) {
+			Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
+			InsertServerCommand("mp_restartgame %i", time);
+		} else {
+			Client_Reply(client, "[ST] \x04Starting StatTrak event next round.");
+		}
 	}
 }
 
@@ -89,17 +110,29 @@ start(client) {
  * Stop a StatTrak Event next round
  *
  * @param client	The client that called the event to stop
+ * @param time		The amount of time to wait to restart game to stop event.
+ 					0 = Next round
  * @noreturn
  */
-stop(client) {
+stop(client, time=0) {
 	if (stopping) {
-		Client_Reply(client, "[ST] \x04StatTrak Event is already set to stop next round.");
+		if (time > 0) {
+			Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
+			InsertServerCommand("mp_restartgame %i", time);
+		} else {
+			Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+		}
 	} else if (starting) {
 		starting = false;
 		Client_PrintToChatAll(false, "[ST] \x04StatTrak Event cancelled for next round.");
 	} else if (running) {
 		stopping = true;
-		Client_PrintToChatAll(false, "[ST] \x04StatTrak Night will end next round.");
+		if (time > 0) {
+			Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
+			InsertServerCommand("mp_restartgame %i", time);
+		} else {
+			Client_PrintToChatAll(false, "[ST] \x04StatTrak Night will end next round.");
+		}
 	} else {
 		Client_Reply(client, "[ST] \x04There isn't a StatTrak Event running.");
 	}

@@ -4,10 +4,10 @@ char[] GetName(client) {
 	return name;
 }
 
-String:plural_points(num) {
-	new String:str[6] = "points";
+String:plural(num) {
+	new String:str[2] = "s";
 	if (num == 1) {
-		str[5] = 0;
+		str[0] = 0;
 	}
 	return str;
 }
