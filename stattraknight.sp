@@ -20,6 +20,7 @@ public Plugin myinfo =
 };
 
 #include "stattraknight/beacon/funcommands.sp"
+#include "stattraknight/weapons.sp"
 #include "stattraknight/points.sp"
 #include "stattraknight/sounds.sp"
 #include "stattraknight/events.sp"
@@ -32,6 +33,7 @@ public void OnPluginStart() {
 	winners = CreateArray(1, 1);
 
 	Sounds_Load();
+	Weapons_Load();
 
 	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0/1/start/stop] [time]");
 	HookEvent("round_start", Event_RoundStart);
