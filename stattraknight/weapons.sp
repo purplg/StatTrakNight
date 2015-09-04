@@ -34,16 +34,16 @@ KeyValues:Weapons_New(write=true) {
 		kv.GoBack();
 
 		kv.JumpToKey("pistol", true);
-		kv.SetNum("deagle", 0);
 		kv.SetNum("elite", 0);
-		kv.SetNum("fiveseven", 0);
-		kv.SetNum("glock", 0);
-		kv.SetNum("p228", 0);
-		kv.SetNum("usp_silencer", 0);
-		kv.SetNum("tec9", 0);
 		kv.SetNum("cz75a", 0);
-		kv.SetNum("p2000", 0);
+		kv.SetNum("usp_silencer", 0);
+		kv.SetNum("usp_silencer_off", 0);
 		kv.SetNum("p250", 0);
+		kv.SetNum("hkp2000", 0);
+		kv.SetNum("tec9", 0);
+		kv.SetNum("glock", 0);
+		kv.SetNum("fiveseven", 0);
+		kv.SetNum("deagle", 0);
 
 		kv.Rewind();
 		if (write) {
