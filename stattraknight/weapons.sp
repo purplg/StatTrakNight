@@ -1,7 +1,8 @@
 char File_weapongroups[] = "addons/sourcemod/configs/st_weapongroups.txt";
 KeyValues kv;
 int weapon_numGroups;
-char weapon_targetGroup[16];
+char weapon_targetGroup[32];
+int weapons_version = 3;
 
 Weapons_Load() {
 	kv = new KeyValues("");
@@ -10,6 +11,9 @@ Weapons_Load() {
 	if (exists) {
 		if (!kv.ImportFromFile(File_weapongroups)) {
 			PrintToServer("[ST] Formatting of '%s' invalid", File_weapongroups);
+			kv = Weapons_New();
+		} else if (kv.GetNum("version") < weapons_version) {
+			PrintToServer("[ST] Updated weapon groups");
 			kv = Weapons_New();
 		}
 	} else {
@@ -21,7 +25,7 @@ Weapons_Load() {
 
 KeyValues:Weapons_New(write=true) {
 		kv = CreateKeyValues("weaponGroups");
-		kv.SetNum("version", 1);
+		kv.SetNum("version", weapons_version);
 		kv.SetNum("numGroups", 2);
 
 		kv.JumpToKey("groups", true);
@@ -31,6 +35,37 @@ KeyValues:Weapons_New(write=true) {
 		kv.SetNum("awp", 0);
 		kv.SetNum("g3sg1", 0);
 		kv.SetNum("scar20", 0);
+		kv.GoBack();
+
+		kv.JumpToKey("assault rifle", true);
+		kv.SetNum("galilar", 0);
+		kv.SetNum("ak47", 0);
+		kv.SetNum("sg556", 0);
+		kv.SetNum("famas", 0);
+		kv.SetNum("m4a1_silencer_off", 0);
+		kv.SetNum("m4a1_silencer", 0);
+		kv.SetNum("aug", 0);
+		kv.GoBack();
+
+		kv.JumpToKey("smg", true);
+		kv.SetNum("mac10", 0);
+		kv.SetNum("mp7", 0);
+		kv.SetNum("ump45", 0);
+		kv.SetNum("bizon", 0);
+		kv.SetNum("p90", 0);
+		kv.SetNum("mp9", 0);
+		kv.GoBack();
+
+		kv.JumpToKey("shotgun", true);
+		kv.SetNum("nova", 0);
+		kv.SetNum("xm1014", 0);
+		kv.SetNum("sawedoff", 0);
+		kv.SetNum("mag7", 0);
+		kv.GoBack();
+
+		kv.JumpToKey("machine gun", true);
+		kv.SetNum("m249", 0);
+		kv.SetNum("negev", 0);
 		kv.GoBack();
 
 		kv.JumpToKey("pistol", true);
@@ -60,7 +95,7 @@ void Weapon_NewGroup() {
 	for (new i = 0; i < rand; i++) {
 		kv.GotoNextKey();
 	}
-	kv.GetSectionName(weapon_targetGroup, 16);
+	kv.GetSectionName(weapon_targetGroup, 32);
 }
 
 bool Weapons_IsTargetGroup(const char[] weapon) {

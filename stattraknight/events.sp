@@ -18,7 +18,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		update_winners();
 		print_leaders();
 		Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
-		Client_PrintToChatAll(false, "[ST] \x04Target must be killed with a %s", weapon_targetGroup);
+		Client_PrintToChatAll(false, "[ST] \x04Target must be killed with a %s.", weapon_targetGroup);
 	}
 }
 
