@@ -20,24 +20,14 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 
 > **Note:** Just like most SourceMod plugins, `sm_statrak` in console is the equivalent of `!stattrak` and `/stattrak` in chat. The only difference is that the `!` shows up in chat while the `/` does not.
 
-`sm_stattrak [0/1/start/stop] [seconds]`
-
 #### Show how many points you have earned
 > **Note**: This will be replaced by a scoreboard in the future
 
-`sm_stattrak`
-
-#### Start an event on next round
-
-`sm_stattrak 1` or `sm_stattrak start`
-
-#### Stop an event on next round
-
-`sm_stattrak 0` or `sm_stattrak stop`
-
-#### Start or stop event after 5 seconds
-
-`sm_stattrak start 5` or `sm_stattrak 0 5`
+| Command 						| Action 									|
+|-------------------------------|-------------------------------------------|
+| sm_stattrak					| Shows your points							|
+| sm_stattrak_start [seconds]	| Start on next round or after # [seconds]	|
+| sm_stattrak_stop [seconds]	| Stop on next round or after # [seconds]	|
 
 # License
 
