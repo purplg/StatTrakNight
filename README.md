@@ -20,9 +20,6 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 
 > **Note:** Just like most SourceMod plugins, `sm_statrak` in console is the equivalent of `!stattrak` and `/stattrak` in chat. The only difference is that the `!` shows up in chat while the `/` does not.
 
-#### Show how many points you have earned
-> **Note**: This will be replaced by a scoreboard in the future
-
 | Command 						| Action 									|
 |-------------------------------|-------------------------------------------|
 | sm_stattrak					| Shows your points							|
