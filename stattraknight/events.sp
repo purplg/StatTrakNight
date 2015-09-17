@@ -9,6 +9,10 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	if (stopping) {
 		complete_stop();
 	}
+	if (GameRules_GetProp("m_bWarmupPeriod") == 1) {
+		starting = true;
+		return;
+	}
 	if (running) {
 		Client_PrintToChatAll(false, "[ST] \x04This is a pre-release version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = BeaconRandom(2);
@@ -109,7 +113,7 @@ public void OnClientCookiesCached(client) {
 
 public OnMapEnd() {
 	Funcommands_OnMapEnd();
-	reset_cookies();
+	complete_stop();
 }
 
 public OnMapStart() {

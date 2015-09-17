@@ -1,6 +1,7 @@
 #include <sourcemod>
 #include <clientprefs>
 #include <smlib>
+#include <sdktools>
 
 new T_TARGET, CT_TARGET;
 new bool:starting = false,
@@ -89,6 +90,7 @@ start(client, time=0) {
 		if (time > 0) {
 			Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
 			InsertServerCommand("mp_restartgame %i", time);
+			InsertServerCommand("mp_warmup_end");
 		} else {
 			Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
 		}
@@ -102,6 +104,7 @@ start(client, time=0) {
 		if (time > 0) {
 			Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
 			InsertServerCommand("mp_restartgame %i", time);
+			InsertServerCommand("mp_warmup_end");
 		} else {
 			Client_Reply(client, "[ST] \x04Starting StatTrak event next round.");
 		}
@@ -116,11 +119,12 @@ start(client, time=0) {
  					0 = Next round
  * @noreturn
  */
-stop(client, time=0) {
+stop(client=0, time=0) {
 	if (stopping) {
 		if (time > 0) {
 			Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
 			InsertServerCommand("mp_restartgame %i", time);
+			InsertServerCommand("mp_warmup_end");
 		} else {
 			Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
 		}
@@ -132,6 +136,7 @@ stop(client, time=0) {
 		if (time > 0) {
 			Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
 			InsertServerCommand("mp_restartgame %i", time);
+			InsertServerCommand("mp_warmup_end");
 		} else {
 			Client_PrintToChatAll(false, "[ST] \x04StatTrak Night will end next round.");
 		}
