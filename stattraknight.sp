@@ -36,7 +36,9 @@ public void OnPluginStart() {
 	Sounds_Load();
 	Weapons_Load();
 
-	RegConsoleCmd("sm_stattrak", Command_StatTrak, "sm_stattrak [0/1/start/stop] [time]");
+	RegConsoleCmd("sm_stattrak", Command_stattrak, "sm_stattrak");
+	RegAdminCmd("sm_stattrak_start", Command_stattrak_start, ADMFLAG_SLAY, "sm_stattrak  [time]");
+	RegAdminCmd("sm_stattrak_stop", Command_stattrak_stop, ADMFLAG_SLAY, "sm_stattrak [time]");
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_death", Event_PlayerDeath);
@@ -45,35 +47,24 @@ public void OnPluginStart() {
 	cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
 }
 
-public Action:Command_StatTrak(client, args) {
-	decl
-		String:arg1[32],
-		String:arg2[32];
-	GetCmdArg(1, arg1, sizeof(arg1));
-	GetCmdArg(2, arg2, sizeof(arg2));
-	if (GetCmdArgs() > 0) {
-		if (Client_IsValid(client) && !Client_HasAdminFlags(client, ADMFLAG_SLAY)) {
-			Client_Reply(client, "[SM] %t", "No Access");
-			return Plugin_Handled;
-		}
-		new time = 0;
-		if (strlen(arg2) > 0) {
-			time = StringToInt(arg2);
-		}
-		if (strcmp("start", arg1, false) == 0
-		|| 	strcmp("1", arg1, false) == 0) {
-			start(client, time);
-		} else if (strcmp("stop", arg1, false) == 0
-		||	strcmp("0", arg1, false) == 0) {
-			stop(client, time);
-		} else {
-			Client_Reply(client, "[ST] Usage: sm_stattrak [0/1/start/stop] [time]");
-		}
-	} else {
+public Action:Command_stattrak(client, args) {
+	new points = getPoints(client);
+	Client_PrintToChat(client, false, "[ST] \x04You have %i point%s.", points, plural(points));
 //		showScores(client);
-		new points = getPoints(client);
-		Client_PrintToChat(client, false, "[ST] \x04You have %i point%s.", points, plural(points));
-	}
+	return Plugin_Handled;
+}
+
+public Action:Command_stattrak_start(client, args) {
+	decl String:arg_time[32];
+	GetCmdArg(1, arg_time, sizeof(arg_time));
+	start(client, StringToInt(arg_time));
+	return Plugin_Handled;
+}
+
+public Action:Command_stattrak_stop(client, args) {
+	decl String:arg_time[32];
+	GetCmdArg(1, arg_time, sizeof(arg_time));
+	stop(client, StringToInt(arg_time));
 	return Plugin_Handled;
 }
 
@@ -152,5 +143,4 @@ complete_stop() {
 	update_winners();
 	print_winners();
 	reset_cookies();
-	Client_PrintToChatAll(false, "[ST] \x04StatTrak Night has ended.");
 }
