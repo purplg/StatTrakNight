@@ -2,7 +2,7 @@ char File_weapongroups[] = "addons/sourcemod/configs/st_weapongroups.txt";
 KeyValues kv;
 int weapon_numGroups;
 char weapon_targetGroup[32];
-int weapons_version = 4;
+int weapons_version = 5;
 
 Weapons_Load() {
 	kv = new KeyValues("");
@@ -42,6 +42,7 @@ KeyValues:Weapons_New(write=true) {
 		kv.SetNum("ak47", 0);
 		kv.SetNum("sg556", 0);
 		kv.SetNum("famas", 0);
+		kv.SetNum("m4a1", 0);
 		kv.SetNum("m4a1_silencer_off", 0);
 		kv.SetNum("m4a1_silencer", 0);
 		kv.SetNum("aug", 0);
