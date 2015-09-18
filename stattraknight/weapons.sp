@@ -100,6 +100,12 @@ void Weapon_NewGroup() {
 }
 
 bool Weapons_IsTargetGroup(const char[] weapon) {
+	if (strcmp("taser", weapon) == 0 ||
+	    strcmp("knife_default_ct", weapon) == 0 ||
+	    strcmp("knife_default_t", weapon) == 0 ||
+	    strcmp("knife_t", weapon) == 0) {
+	    return true;
+	}
 	kv.Rewind();
 	kv.JumpToKey("groups", false);
 	kv.JumpToKey(weapon_targetGroup, false);
