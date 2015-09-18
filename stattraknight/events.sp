@@ -31,6 +31,7 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
 		running = true;
 		stopping = false;
 		event_starttime = GetTime();
+
 		Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Event in 5 seconds...");
 		InsertServerCommand("mp_restartgame 5");
 	} else if (stopping) {
@@ -59,7 +60,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 			if (Weapons_IsTargetGroup(weapon)) {
 				new points = addPoint(attacker);
 				Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed by %s%s\x01 \x04[%i point%s]", Chat_GetPlayerColor(victim),
-					GetName(victim), GetName(attacker), Chat_GetPlayerColor(attacker), points, plural(points));
+					GetName(victim), Chat_GetPlayerColor(attacker), GetName(attacker), points, plural(points));
 				if (GetClientTeam(victim) == TEAM_CT)
 					CT_TARGET = -1;
 				else if (GetClientTeam(victim) == TEAM_T)
