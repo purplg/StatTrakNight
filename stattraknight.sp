@@ -24,8 +24,8 @@ public Plugin myinfo =
 #include "stattraknight/weapons.sp"
 #include "stattraknight/points.sp"
 #include "stattraknight/sounds.sp"
-#include "stattraknight/events.sp"
 #include "stattraknight/util.sp"
+#include "stattraknight/events.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/menu.sp"
 
