@@ -5,6 +5,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		running = true;
 		stopping = false;
 		event_starttime = GetTime();
+		Weapon_NewGroup();
 	}
 	if (stopping) {
 		complete_stop();
@@ -16,7 +17,6 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Client_PrintToChatAll(false, "[ST] \x04This is a beta version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = BeaconRandom(2);
 		CT_TARGET = BeaconRandom(3);
-		Weapon_NewGroup();
 
 		update_winners();
 		print_leaders();
