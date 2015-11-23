@@ -24,7 +24,6 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	Client_PrintToChatAll(false, "[ST] Kill them with \x04%ss\x01.", weapon_targetGroup);
     }
 }
-
 public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     if (starting) {
 	starting = false;
@@ -39,6 +38,23 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     }
 }
 
+public void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast) {
+    if (running) {
+	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
+	int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+	if (!Client_IsValid(attacker)) return;
+	
+	if (victim == CT_TARGET || victim == T_TARGET) {
+	    char weapon[32];
+	    GetEventString(event, "weapon", weapon, 32);
+	    if (Weapons_IsTargetGroup(weapon)) {
+		int dmg = GetEventInt(event, "dmg_health");
+		addPoints(attacker, dmg);
+	    }
+	}
+    }
+}
+
 public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
     if (running) {
 	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -46,7 +62,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 	if (!Client_IsValid(attacker)) return;
 
 	if (victim == CT_TARGET || victim == T_TARGET) {
-	    if (victim == attacker) {
+	    if (victim == attacker || attacker == 0) {
 		if (GetClientTeam(victim) == TEAM_CT)
 		    CT_TARGET = BeaconRandom(TEAM_CT);
 		else if (GetClientTeam(victim) == TEAM_T)
@@ -55,19 +71,17 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		Client_PrintToChatAll(false, "[ST] %s%s\x01 is the new target.", Chat_GetPlayerColor(victim), GetName(CT_TARGET));
 		return;
 	    }
+
 	    char weapon[32];
 	    GetEventString(event, "weapon", weapon, 32);
+
 	    if (Weapons_IsTargetGroup(weapon)) {
-		int points = addPoint(attacker);
-		Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed by %s%s\x01 \x04[%i point%s]", Chat_GetPlayerColor(victim),
-		    GetName(victim), Chat_GetPlayerColor(attacker), GetName(attacker), points, plural(points));
+		Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed", Chat_GetPlayerColor(victim), GetName(victim));
+
 		if (GetClientTeam(victim) == TEAM_CT)
 		    CT_TARGET = -1;
 		else if (GetClientTeam(victim) == TEAM_T)
 		    T_TARGET = -1;
-	    } else {
-		Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed with the wrong weapon.", Chat_GetPlayerColor(victim),
-		    GetName(victim));
 	    }
 	}
     }

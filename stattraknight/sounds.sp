@@ -1,40 +1,16 @@
-char youkillSound[PLATFORM_MAX_PATH];
-char theyKillSound[PLATFORM_MAX_PATH];
+char PointSound[PLATFORM_MAX_PATH];
 
 void Sounds_Load() {
-    youkillSound = "ui/deathnotice.wav";
-    theyKillSound = "ui/bonus_alert_end.wav";
-    PrecacheSound(youkillSound, true);
-    PrecacheSound(theyKillSound, true);
+    PointSound = "ui/deathnotice.wav";
+    PrecacheSound(PointSound, true);
 }
 
 /**
- * Play the earned kill sound for the attacker and the lost kill round for
- * everyone else on the attackers team
+ * Play the earned points sound to client
  *
- * @param client	The attacker that got the kill
+ * @param client	The attacker that got the points
  * @noreturn
  */
 void Sounds_PlayKill(int client) {
-    int team = GetClientTeam(client);
-    int flag;
-    if (team == 2) { // T
-	flag = CLIENTFILTER_TEAMONE;
-    } else if (team == 3) { // CT
-	flag = CLIENTFILTER_TEAMTWO;
-    }
-    if (flag != 0) {
-	int size = Team_GetClientCount(team);
-	int[] clients = new int[size];
-	Client_Get(clients, flag);
-	for (int i = 0; i < size; i++) {
-	    if (clients[i] == client) {
-		size -= 1;
-		clients[i] = clients[size];
-		break;
-	    }
-	}
-	EmitSoundToClient(client, youkillSound);
-	EmitSound(clients, size, theyKillSound);
-    }
+    EmitSoundToClient(client, PointSound);
 }
