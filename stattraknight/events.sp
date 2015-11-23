@@ -1,3 +1,6 @@
+int T_TARGET_HEALTH;
+int CT_TARGET_HEALTH;
+
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
     Funcommands_Event_RoundStart();
     if (starting) {
@@ -17,6 +20,8 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	Client_PrintToChatAll(false, "[ST] \x04This is a beta version of the StatTrakNight plugin. Expect bugs.");
 	T_TARGET = BeaconRandom(2);
 	CT_TARGET = BeaconRandom(3);
+	T_TARGET_HEALTH = 100;
+	CT_TARGET_HEALTH = 100;
 
 	update_winners();
 	print_leaders();
@@ -49,6 +54,13 @@ public void Event_PlayerHurt(Event event, const char[] name, bool dontBroadcast)
 	    GetEventString(event, "weapon", weapon, 32);
 	    if (Weapons_IsTargetGroup(weapon)) {
 		int dmg = GetEventInt(event, "dmg_health");
+		if (victim == CT_TARGET) {
+		    if (dmg > CT_TARGET_HEALTH) dmg = CT_TARGET_HEALTH;
+		    CT_TARGET_HEALTH = GetEventInt(event, "health");
+		} else if (victim == T_TARGET) {
+		    if (dmg > T_TARGET_HEALTH) dmg = T_TARGET_HEALTH;
+		    T_TARGET_HEALTH = GetEventInt(event, "health");
+		}
 		addPoints(attacker, dmg);
 	    }
 	}
