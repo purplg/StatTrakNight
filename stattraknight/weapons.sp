@@ -10,10 +10,10 @@ void Weapons_Load() {
     bool exists = FileExists(File_weapongroups);
     if (exists) {
 	if (!kv.ImportFromFile(File_weapongroups)) {
-	    PrintToServer("[ST] Formatting of '%s' invalid", File_weapongroups);
+	    PrintServer("Formatting of '%s' invalid", File_weapongroups);
 	    kv = Weapons_New();
 	} else if (kv.GetNum("version") < weapons_version) {
-	    PrintToServer("[ST] Updated weapon groups");
+	    PrintServer("Updated weapon groups");
 	    kv = Weapons_New();
 	}
     } else {

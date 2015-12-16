@@ -1,3 +1,5 @@
+char prefix = "[ \x03StatTrakNight\x01 ]";
+
 const int TEAM_T = 2, TEAM_CT = 3;
 
 char[] GetName(int client) {
@@ -47,4 +49,20 @@ void reset_cookies() {
 	    SetClientCookie(clients[i], cookie_points, "0");
 	}
     }
+}
+
+void PrintServer(const char[] msg, any:...) {
+    PrintToServer("%s %s", prefix, msg);
+}
+
+void PrintClient(int client, const char[] msg, any:...) {
+    Client_PrintToChat(client, false, "%s %s", prefix, msg);
+}
+
+void PrintAll(const char[] msg, any:...) {
+    Client_PrintToChatAll(false, "%s %s", prefix, msg);
+}
+
+void Reply(int client, const char[] msg, any:...) {
+    ReplyToCommand(client, "%s %s", prefix, msg);
 }

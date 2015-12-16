@@ -14,14 +14,14 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	return;
     }
     if (running) {
-	Client_PrintToChatAll(false, "[ST] \x04This is a beta version of the StatTrakNight plugin. Expect bugs.");
+	PrintAll("\x04This is a beta version of the StatTrakNight plugin. Expect bugs.");
 	T_TARGET = BeaconRandom(2);
 	CT_TARGET = BeaconRandom(3);
 
 	update_winners();
 	print_leaders();
-	Client_PrintToChatAll(false, "[ST] \x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
-	Client_PrintToChatAll(false, "[ST] Kill them with \x04%ss\x01.", weapon_targetGroup);
+	PrintAll("\x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
+	PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
     }
 }
 
@@ -32,7 +32,7 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
 	stopping = false;
 	event_starttime = GetTime();
 
-	Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak Event in 5 seconds...");
+	PrintAll("\x04Starting StatTrak Event in 5 seconds...");
 	InsertServerCommand("mp_restartgame 5");
     } else if (stopping) {
 	complete_stop();
@@ -52,21 +52,21 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		else if (GetClientTeam(victim) == TEAM_T)
 		    T_TARGET = BeaconRandom(TEAM_T);
 
-		Client_PrintToChatAll(false, "[ST] %s%s\x01 is the new target.", Chat_GetPlayerColor(victim), GetName(CT_TARGET));
+		PrintAll("%s%s\x01 is the new target.", Chat_GetPlayerColor(victim), GetName(CT_TARGET));
 		return;
 	    }
 	    char weapon[32];
 	    GetEventString(event, "weapon", weapon, 32);
 	    if (Weapons_IsTargetGroup(weapon)) {
 		int points = addPoint(attacker);
-		Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed by %s%s\x01 \x04[%i point%s]", Chat_GetPlayerColor(victim),
+		PrintAll("%s%s\x01 was killed by %s%s\x01 \x04[%i point%s]", Chat_GetPlayerColor(victim),
 		    GetName(victim), Chat_GetPlayerColor(attacker), GetName(attacker), points, plural(points));
 		if (GetClientTeam(victim) == TEAM_CT)
 		    CT_TARGET = -1;
 		else if (GetClientTeam(victim) == TEAM_T)
 		    T_TARGET = -1;
 	    } else {
-		Client_PrintToChatAll(false, "[ST] %s%s\x01 was killed with the wrong weapon.", Chat_GetPlayerColor(victim),
+		PrintAll("%s%s\x01 was killed with the wrong weapon.", Chat_GetPlayerColor(victim),
 		    GetName(victim));
 	    }
 	}

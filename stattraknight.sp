@@ -34,9 +34,9 @@ public void OnPluginStart() {
     Sounds_Load();
     Weapons_Load();
 
-    RegConsoleCmd("sm_stattrak", Command_stattrak, "sm_stattrak");
-    RegAdminCmd("sm_stattrak_start", Command_stattrak_start, ADMFLAG_SLAY, "sm_stattrak  [time]");
-    RegAdminCmd("sm_stattrak_stop", Command_stattrak_stop, ADMFLAG_SLAY, "sm_stattrak [time]");
+    RegConsoleCmd("sm_st_points", Command_stattrak, "sm_st_points");
+    RegAdminCmd("sm_st_start", Command_stattrak_start, ADMFLAG_SLAY, "sm_st_start  [time]");
+    RegAdminCmd("sm_st_stop", Command_stattrak_stop, ADMFLAG_SLAY, "sm_st_stop [time]");
     HookEvent("round_start", Event_RoundStart);
     HookEvent("round_end", Event_RoundEnd);
     HookEvent("player_death", Event_PlayerDeath);
@@ -47,7 +47,7 @@ public void OnPluginStart() {
 
 public Action Command_stattrak(int client, int args) {
     int points = getPoints(client);
-    Client_PrintToChat(client, false, "[ST] \x04You have %i point%s.", points, plural(points));
+    PrintClient(client, "\x04You have %i point%s.", points, plural(points));
     //		showScores(client);
     return Plugin_Handled;
 }
@@ -77,25 +77,25 @@ public Action Command_stattrak_stop(int client, int args) {
 void start(int client, int time=0) {
     if (starting) {
 	if (time > 0) {
-	    Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
+	    PrintAll("\x04Starting StatTrak event in %i second%s.", time, plural(time));
 	    InsertServerCommand("mp_restartgame %i", time);
 	    InsertServerCommand("mp_warmup_end");
 	} else {
-	    Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+	    Client_Reply(client, "\x04StatTrak event already starting next round.");
 	}
     } else if (stopping) {
 	stopping = false;
-	Client_PrintToChatAll(false, "[ST] \x04StatTrak Night set to continue.");
+	PrintAll("\x04StatTrak Night set to continue.");
     } else if (running) {
-	Client_Reply(client, "[ST] \x04StatTrak event already running.");
+	Client_Reply(client, "\x04StatTrak event already running.");
     } else {
 	starting = true;
 	if (time > 0) {
-	    Client_PrintToChatAll(false, "[ST] \x04Starting StatTrak event in %i second%s.", time, plural(time));
+	    PrintAll("\x04Starting StatTrak event in %i second%s.", time, plural(time));
 	    InsertServerCommand("mp_restartgame %i", time);
 	    InsertServerCommand("mp_warmup_end");
 	} else {
-	    Client_Reply(client, "[ST] \x04Starting StatTrak event next round.");
+	    Reply(client, "\x04Starting StatTrak event next round.");
 	}
     }
 }
@@ -111,26 +111,26 @@ void start(int client, int time=0) {
 void stop(client=0, time=0) {
     if (stopping) {
 	if (time > 0) {
-	    Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
+	    PrintAll("\x04Stopping StatTrak event in %i seconds.", time);
 	    InsertServerCommand("mp_restartgame %i", time);
 	    InsertServerCommand("mp_warmup_end");
 	} else {
-	    Client_Reply(client, "[ST] \x04StatTrak event already starting next round.");
+	    Reply(client, "\x04StatTrak event already starting next round.");
 	}
     } else if (starting) {
 	starting = false;
-	Client_PrintToChatAll(false, "[ST] \x04StatTrak Event cancelled for next round.");
+	PrintAll("\x04StatTrak Event cancelled for next round.");
     } else if (running) {
 	stopping = true;
 	if (time > 0) {
-	    Client_PrintToChatAll(false, "[ST] \x04Stopping StatTrak event in %i seconds.", time);
+	    PrintAll("\x04Stopping StatTrak event in %i seconds.", time);
 	    InsertServerCommand("mp_restartgame %i", time);
 	    InsertServerCommand("mp_warmup_end");
 	} else {
-	    Client_PrintToChatAll(false, "[ST] \x04StatTrak Night will end next round.");
+	    PrintAll("\x04StatTrak Night will end next round.");
 	}
     } else {
-	Client_Reply(client, "[ST] \x04There isn't a StatTrak Event running.");
+	Reply(client, "\x04There isn't a StatTrak Event running.");
     }
 }
 

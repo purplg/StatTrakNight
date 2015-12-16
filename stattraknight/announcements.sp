@@ -1,33 +1,33 @@
 void print_leaders() {
     if (topPoints > 0) {
 	if (GetArraySize(winners) == 1) {
-	    Client_PrintToChatAll(false, "[ST] %s%s\x01 is leading with \x04[%i point%s]",
+	    PrintAll("%s%s\x01 is leading with \x04[%i point%s]",
 		Chat_GetPlayerColor(GetArrayCell(winners, 0)),
 		GetName(GetArrayCell(winners, 0)),
 		topPoints,
 		plural(topPoints));
 	} else if (GetArraySize(winners) > 1) {
-	    Client_PrintToChatAll(false, "[ST] %s\x01 are leading with \x04[%i point%s]",
+	    PrintAll("%s\x01 are leading with \x04[%i point%s]",
 		format_tie_message(),
 		topPoints,
 		plural(topPoints));
 	}
     } else {
-	Client_PrintToChatAll(false, "[ST] No one has scored any points yet.");
+	PrintAll("No one has scored any points yet.");
     }
 }
 
 void print_winners() {
     if (topPoints > 0) {
 	if (GetArraySize(winners) == 1) {
-	    Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s",
+	    PrintAll("\x04%s won with %i point%s",
 	    GetName(GetArrayCell(winners, 0)), topPoints, plural(topPoints));
 	} else if (GetArraySize(winners) > 1) {
-	    Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s",
+	    PrintAll("\x04%s won with %i point%s",
 	    format_tie_message(), topPoints, plural(topPoints));
 	}
     } else {
-	Client_PrintToChatAll(false, "[ST] \x04No one won.");
+	PrintAll("\x04No one won.");
     }
 }
 
