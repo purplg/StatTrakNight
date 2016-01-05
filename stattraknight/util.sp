@@ -1,4 +1,4 @@
-char prefix = "[ \x03StatTrakNight\x01 ]";
+char prefix[] = "[ \x03StatTrakNight\x01 ]";
 
 const int TEAM_T = 2, TEAM_CT = 3;
 
@@ -17,7 +17,7 @@ char[] plural(int num) {
 }
 
 char[] Chat_GetPlayerColor(int client) {
-    char buffer[5] = "";
+    char buffer[5];
     switch (GetClientTeam(client)) {
 	case TEAM_T: {
 	    buffer = "\x09";
@@ -52,17 +52,25 @@ void reset_cookies() {
 }
 
 void PrintServer(const char[] msg, any:...) {
-    PrintToServer("%s %s", prefix, msg);
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToServer("%s %s", prefix, buffer);
 }
 
 void PrintClient(int client, const char[] msg, any:...) {
-    Client_PrintToChat(client, false, "%s %s", prefix, msg);
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    PrintToChat(client, "%s %s", prefix, buffer);
 }
 
 void PrintAll(const char[] msg, any:...) {
-    Client_PrintToChatAll(false, "%s %s", prefix, msg);
+    char buffer[512];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToChatAll("%s %s", prefix, buffer);
 }
 
 void Reply(int client, const char[] msg, any:...) {
-    ReplyToCommand(client, "%s %s", prefix, msg);
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    ReplyToCommand(client, "%s %s", prefix, buffer);
 }
