@@ -9,6 +9,9 @@ bool starting, stopping, running;
 int event_starttime;
 Handle cookie_points;
 
+ArrayList scoreboard_players;
+ArrayList scoreboard_points;
+
 public Plugin myinfo =
 {
     name = "StatTrak Night",
@@ -19,22 +22,25 @@ public Plugin myinfo =
 };
 
 #include "stattraknight/beacon/funcommands.sp"
+#include "stattraknight/util.sp"
 #include "stattraknight/weapons.sp"
 #include "stattraknight/points.sp"
 #include "stattraknight/sounds.sp"
-#include "stattraknight/util.sp"
 #include "stattraknight/events.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/menu.sp"
 
 public void OnPluginStart() {
     Funcommands_OnPluginStart();
-    winners = CreateArray(1, 1);
+    winners = CreateArray(32);
+    scoreboard_players = CreateArray(32);
+    scoreboard_points = CreateArray();
 
     Sounds_Load();
     Weapons_Load();
 
-    RegConsoleCmd("sm_st_points", Command_stattrak, "sm_st_points");
+    RegConsoleCmd("sm_st", Command_stattrak_scoreboard, "sm_st");
+    RegConsoleCmd("sm_st_points", Command_stattrak_points, "sm_st_points");
     RegAdminCmd("sm_st_start", Command_stattrak_start, ADMFLAG_SLAY, "sm_st_start  [time]");
     RegAdminCmd("sm_st_stop", Command_stattrak_stop, ADMFLAG_SLAY, "sm_st_stop [time]");
     HookEvent("round_start", Event_RoundStart);
@@ -45,7 +51,11 @@ public void OnPluginStart() {
     cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
 }
 
-public Action Command_stattrak(int client, int args) {
+public Action Command_stattrak_scoreboard(int client, int args) {
+   showScores(client); 
+}
+
+public Action Command_stattrak_points(int client, int args) {
     int points = getPoints(client);
     PrintClient(client, "\x04You have %i point%s.", points, plural(points));
     //		showScores(client);

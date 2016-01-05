@@ -1,19 +1,33 @@
-public void MenuHandler(Handle menu, MenuAction action, int param1, int param2) {
-    if (action == MenuAction_Select) {
-	char info[32];
-	bool found = GetMenuItem(menu, param2, info, sizeof(info));
-	PrintAll("You selected item: %d (found? %d info: %s)", param2, found, info);
-    } else if (action == MenuAction_Cancel) {
-	PrintAll("Client %d's menu was cancelled. Reason: %d", param1, param2);
-    } else if (action == MenuAction_End) {
+public int MenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+    if (action == MenuAction_End) {
 	CloseHandle(menu);
     }
 }
 
-void showScores(int client) {
-    Handle menu = CreateMenu(MenuHandler);
-    SetMenuTitle(menu, "StatTrak Scoreboard");
-    AddMenuItem(menu, "", "Coming soon...");
-    SetMenuExitButton(menu, true);
-    DisplayMenu(menu, client, 20);
+Action showScores(int client) {
+    Menu menu = new Menu(MenuHandler);
+    menu.SetTitle("StatTrakNight Scoreboard");
+    for (int i = 0; i < scoreboard_players.Length; i++) {
+	char uid[32];
+	scoreboard_players.GetString(i, uid, sizeof(uid));
+
+	int c = Client_FindBySteamId(uid);
+	if (c == -1) {
+	    c = Client_FindByName(uid, false, true);
+	}
+
+	char name[MAX_NAME_LENGTH];
+	GetClientName(c, name, sizeof(name));
+
+	int player_index = scoreboard_players.FindString(uid);
+
+	int points = scoreboard_points.Get(player_index);
+
+	char entry[64];
+	Format(entry, sizeof(entry), "%s [%i points]", name, points);
+	menu.AddItem("", entry);
+    }
+    menu.Display(client, 20);
+
+    return Plugin_Handled;
 }
