@@ -20,11 +20,11 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 
 > **Note:** Just like most SourceMod plugins, `sm_statrak` in console is the equivalent of `!stattrak` and `/stattrak` in chat. The only difference is that the `!` shows up in chat while the `/` does not.
 
-| Command 						| Action 									|
-|-------------------------------|-------------------------------------------|
-| sm_stattrak					| Shows your points							|
-| sm_stattrak_start [seconds]	| Start on next round or after # [seconds]	|
-| sm_stattrak_stop [seconds]	| Stop on next round or after # [seconds]	|
+| Command 						  | Action 									                  |
+|-----------------------|-------------------------------------------|
+| sm_stattrak					  | Shows your points							            |
+| sm_st_start [seconds]	| Start on next round or after # [seconds]	|
+| sm_st_stop [seconds]	| Stop on next round or after # [seconds]	  |
 
 # License
 
