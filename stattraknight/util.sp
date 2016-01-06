@@ -16,6 +16,14 @@ char[] plural(int num) {
     return str;
 }
 
+int Client_FindByUid(char[] uid) {
+    int client = Client_FindBySteamId(uid);
+    if (client == -1) {
+	client = Client_FindByName(uid);
+    }
+    return client;
+}
+
 char[] Chat_GetPlayerColor(int client) {
     char buffer[5];
     switch (GetClientTeam(client)) {
@@ -29,26 +37,9 @@ char[] Chat_GetPlayerColor(int client) {
     return buffer;
 }
 
-void Client_Init(int client) {
-    if (Client_IsValid(client)) {
-	if (GetClientCookieTime(client, cookie_points) < event_starttime) {
-	    SetClientCookie(client, cookie_points, "0");
-	}
-    }
-}
-
-void reset_cookies() {
-    int size = Client_GetCount();
-    int[] clients = new int[size];
-    Client_Get(clients, CLIENTFILTER_INGAME);
-
-    event_starttime = GetTime();
-
-    for (int i; i < size; i++) {
-	if (Client_IsValid(clients[i])) {
-	    SetClientCookie(clients[i], cookie_points, "0");
-	}
-    }
+void reset_game() {
+    scoreboard_players.Clear();
+    scoreboard_points.Clear();
 }
 
 void PrintServer(const char[] msg, any:...) {

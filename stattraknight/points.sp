@@ -1,6 +1,3 @@
-ArrayList winners;
-int topPoints;
-
 int getPoints(int client) {
     char uid[32];
     GetUId(client, uid, sizeof(uid));
@@ -36,29 +33,6 @@ int addPoint(int client) {
 
     Sounds_PlayKill(client);
     return points;
-}
-
-void update_winners() {
-    int size = Client_GetCount();
-    int[] clients = new int[size];
-    Client_Get(clients, CLIENTFILTER_INGAME);
-
-    ClearArray(winners);
-    topPoints = 0;
-    for (int i; i < size; i++) {
-	if (clients[i] != 0) {
-	    int points = getPoints(clients[i]);
-	    if (points == 0) continue;
-
-	    if (points > topPoints) {
-		ClearArray(winners);
-		PushArrayCell(winners, clients[i]);
-		topPoints = points;
-	    } else if (points == topPoints) {
-		PushArrayCell(winners, clients[i]);
-	    }
-	}
-    }
 }
 
 void GetUId(client, char[] buffer, int len) {

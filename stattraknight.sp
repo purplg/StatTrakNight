@@ -6,9 +6,6 @@
 int T_TARGET, CT_TARGET;
 bool starting, stopping, running;
 
-int event_starttime;
-Handle cookie_points;
-
 ArrayList scoreboard_players;
 ArrayList scoreboard_points;
 
@@ -32,7 +29,6 @@ public Plugin myinfo =
 
 public void OnPluginStart() {
     Funcommands_OnPluginStart();
-    winners = CreateArray(32);
     scoreboard_players = CreateArray(32);
     scoreboard_points = CreateArray();
 
@@ -48,7 +44,6 @@ public void OnPluginStart() {
     HookEvent("player_death", Event_PlayerDeath);
     HookEvent("cs_win_panel_match", Event_EndMatch);
     HookEvent("bot_takeover", Event_BotTakeover);
-    cookie_points = RegClientCookie("stattrak_points", "The points each client has earned", CookieAccess_Protected);
 }
 
 public Action Command_stattrak_scoreboard(int client, int args) {
@@ -148,7 +143,6 @@ void complete_stop() {
     running = false;
     stopping = false;
     starting = false;
-    update_winners();
     print_winners();
-    reset_cookies();
+    reset_game();
 }

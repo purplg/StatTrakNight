@@ -4,7 +4,6 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	starting = false;
 	running = true;
 	stopping = false;
-	event_starttime = GetTime();
 	Weapon_NewGroup();
     }
     if (stopping) {
@@ -18,7 +17,6 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	T_TARGET = BeaconRandom(2);
 	CT_TARGET = BeaconRandom(3);
 
-	update_winners();
 	print_leaders();
 	PrintAll("\x0D%s\x01 and \x09%s\x01 are the targets.", GetName(CT_TARGET), GetName(T_TARGET));
 	PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
@@ -30,7 +28,6 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
 	starting = false;
 	running = true;
 	stopping = false;
-	event_starttime = GetTime();
 
 	PrintAll("\x04Starting StatTrak Event in 5 seconds...");
 	InsertServerCommand("mp_restartgame 5");
@@ -93,14 +90,6 @@ public void Event_BotTakeover(Event event, const char[] name, bool dontBroadcast
     }
 }
 
-/**
-* When a client joins, this is called when that client receives it's stored cookies from the server.
-* This function will check to see if the points earned are for the current event, and if not erase them.
-*/
-public void OnClientCookiesCached(int client) {
-    Client_Init(client);
-}
-
 public void OnMapEnd() {
     Funcommands_OnMapEnd();
     complete_stop();
@@ -108,4 +97,5 @@ public void OnMapEnd() {
 
 public void OnMapStart() {
     Funcommands_OnMapStart();
+    reset_game();
 }

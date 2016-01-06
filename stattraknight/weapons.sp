@@ -90,7 +90,6 @@ KeyValues Weapons_New(bool write=true) {
 
 void Weapon_NewGroup() {
     int rand = Math_GetRandomInt(0, weapon_numGroups-1);
-    rand = 5;
     kv.Rewind();
     kv.JumpToKey("groups");
     kv.GotoFirstSubKey();
