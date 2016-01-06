@@ -22,7 +22,7 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 
 | Command 						  | Action 									                  |
 |-----------------------|-------------------------------------------|
-| sm_stattrak					  | Shows your points							            |
+| sm_st     					  | Shows your points							            |
 | sm_st_start [seconds]	| Start on next round or after # [seconds]	|
 | sm_st_stop [seconds]	| Stop on next round or after # [seconds]	  |
 
