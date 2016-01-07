@@ -3,7 +3,7 @@ int getPoints(int client) {
     GetUId(client, uid, sizeof(uid));
     int player_index = scoreboard_players.FindString(uid);
     if (player_index == -1) {
-	return -1;
+	return 0;
     } else {
 	return scoreboard_points.Get(player_index);
     }
