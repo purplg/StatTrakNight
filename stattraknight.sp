@@ -51,6 +51,7 @@ public void OnPluginStart() {
 
 public Action Command_stattrak_scoreboard(int client, int args) {
    Scoreboard_Show(client); 
+   return Plugin_Handled;
 }
 
 public Action Command_stattrak_points(int client, int args) {
