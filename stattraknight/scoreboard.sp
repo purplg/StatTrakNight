@@ -4,7 +4,7 @@ public int MenuHandler(Menu menu, MenuAction action, int param1, int param2) {
     }
 }
 
-Action showScores(int client) {
+Action Scoreboard_Show(int client) {
     Menu menu = new Menu(MenuHandler);
     menu.SetTitle("StatTrakNight Scoreboard");
     for (int i = 0; i < scoreboard_players.Length; i++) {

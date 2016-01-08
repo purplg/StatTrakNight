@@ -1,6 +1,6 @@
-int getPoints(int client) {
+int Points_Get(int client) {
     char uid[32];
-    GetUId(client, uid, sizeof(uid));
+    Client_GetUId(client, uid, sizeof(uid));
     int player_index = scoreboard_players.FindString(uid);
     if (player_index == -1) {
 	return 0;
@@ -9,9 +9,9 @@ int getPoints(int client) {
     }
 }
 
-int addPoint(int client) {
+int Points_Add(int client) {
     char uid[32];
-    GetUId(client, uid, sizeof(uid));
+    Client_GetUId(client, uid, sizeof(uid));
 
     int points = 1;
     int player_index = scoreboard_players.FindString(uid);
@@ -31,14 +31,24 @@ int addPoint(int client) {
 	scoreboard_points.SwapAt(player_index, swap_index);
     }
 
-    Sounds_PlayKill(client);
+    Sound_PlayKill(client);
     return points;
 }
 
-void GetUId(client, char[] buffer, int len) {
-    if (IsFakeClient(client)) {
-	GetClientName(client, buffer, len);
-    } else {
-	GetClientAuthId(client, AuthId_Steam2, buffer, len);	
+int Points_GetNumLeaders() {
+    // Check if any winners
+    if (scoreboard_points.Length == 0) {
+	return 0;
     }
+
+    // Count number of winners
+    int points = scoreboard_points.Get(0);
+    int numLeaders = 1;
+    while (numLeaders < scoreboard_points.Length) {
+	if (scoreboard_points.Get(numLeaders) < points) {
+	    break;
+	}
+	numLeaders++;
+    }
+    return numLeaders;
 }

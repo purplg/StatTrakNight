@@ -15,7 +15,7 @@ void Sounds_Load() {
  * @param client	The attacker that got the kill
  * @noreturn
  */
-void Sounds_PlayKill(int client) {
+void Sound_PlayKill(int client) {
     int team = GetClientTeam(client);
     int flag;
     if (team == 2) { // T

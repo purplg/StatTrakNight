@@ -1,93 +1,72 @@
-void print_leaders() {
-    int numLeaders = get_num_leaders();
+char prefix[] = "[ \x03StatTrakNight\x01 ]";
+
+void Print_Leaders() {
+    int numLeaders = Points_GetNumLeaders();
 
     if (numLeaders == 0) {
 	PrintAll("No one has scored any points yet.");
     } else if (numLeaders == 1) {
 	int points = scoreboard_points.Get(0);
 	PrintAll("%s is leading with %i point%s",
-	    format_tie(numLeaders),
+	    Format_Tie(numLeaders),
 	    points,
-	    plural(points));
+	    Format_Plural(points));
     } else {
 	int points = scoreboard_points.Get(0);
 	PrintAll("%s are leading with %i point%s",
-	    format_tie(numLeaders),
+	    Format_Tie(numLeaders),
 	    points,
-	    plural(points));
+	    Format_Plural(points));
     }
 }
 
-void print_winners() {
-    int numWinners = get_num_leaders();
+void Print_Winners() {
+    int numWinners = Points_GetNumLeaders();
 
     if (numWinners == 0) {
 	PrintAll("No one won.");
     } else {
 	int points = scoreboard_points.Get(0);
 	PrintAll("%s won with %i point%s",
-	    format_tie(numWinners),
+	    Format_Tie(numWinners),
 	    points,
-	    plural(points));
+	    Format_Plural(points));
     }
 }
 
-int get_num_leaders() {
-    // Check if any winners
-    if (scoreboard_points.Length == 0) {
-	return 0;
-    }
-
-    // Count number of winners
-    int points = scoreboard_points.Get(0);
-    int numLeaders = 1;
-    while (numLeaders < scoreboard_points.Length) {
-	if (scoreboard_points.Get(numLeaders) < points) {
-	    break;
+char[] Print_GetPlayerColor(int client) {
+    char buffer[5];
+    switch (GetClientTeam(client)) {
+	case TEAM_T: {
+	    buffer = "\x09";
 	}
-	numLeaders++;
+	case TEAM_CT: {
+	    buffer = "\x0D";
+	}
     }
-    return numLeaders;
+    return buffer;
 }
 
-char[] format_tie(int numLeaders) {
-    char str[255];
-    char buffer[32];
-    if (numLeaders == 1) {
-	scoreboard_players.GetString(0, buffer, sizeof(buffer));
-	int client = Client_FindByUid(buffer);
+void PrintServer(const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToServer("%s %s", prefix, buffer);
+}
 
-	Format(str, sizeof(str), "%s%s\x01",
-	    Chat_GetPlayerColor(client), GetName(client));
-    } else if (numLeaders == 2) {
-	scoreboard_players.GetString(0, buffer, sizeof(buffer));
-	int client1 = Client_FindByUid(buffer);
-	scoreboard_players.GetString(1, buffer, sizeof(buffer));
-	int client2 = Client_FindByUid(buffer);
-	Format(str, sizeof(str), "%s%s\x01 and %s%s\x01",
-	    Chat_GetPlayerColor(client1), GetName(client1),
-	    Chat_GetPlayerColor(client2), GetName(client2)
-	);
-    } else {
-	scoreboard_players.GetString(0, buffer, sizeof(buffer));
-	int client1 = Client_FindByUid(buffer);
-	scoreboard_players.GetString(1, buffer, sizeof(buffer));
-	int client2 = Client_FindByUid(buffer);
-	Format(str, sizeof(str), "%s%s\x01, %s%s\x01",
-	    Chat_GetPlayerColor(client1), GetName(client1),
-	    Chat_GetPlayerColor(client2), GetName(client2)
-	);
-	int client;
-	for (int i = 2; i < scoreboard_players.Length-2; i++) {
-	    scoreboard_players.GetString(i, buffer, sizeof(buffer));
-	    client = Client_FindByUid(buffer);
-	    Format(str, sizeof(str), "%s, %s%s\x01",
-		str, Chat_GetPlayerColor(client), GetName(client));
-	}
-	scoreboard_players.GetString(scoreboard_players.Length-1, buffer, sizeof(buffer));
-	client = Client_FindByUid(buffer);
-	Format(str, sizeof(str), "%s, and %s%s\x01",
-	    str, Chat_GetPlayerColor(client), GetName(client));
-    }
-    return str;
+void PrintClient(int client, const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    PrintToChat(client, "%s %s", prefix, buffer);
+}
+
+void PrintAll(const char[] msg, any:...) {
+    char buffer[512];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToChatAll("%s %s", prefix, buffer);
+}
+
+void Reply(int client, const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    ReplyToCommand(client, "%s %s", prefix, buffer);
 }
