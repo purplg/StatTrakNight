@@ -34,13 +34,13 @@ char[] Format_Tie(int numLeaders) {
 	    Print_GetPlayerColor(client2), Client_GetName(client2)
 	);
 	int client;
-	for (int i = 2; i < scoreboard_players.Length-2; i++) {
+	for (int i = 2; i < numLeaders-1; i++) {
 	    scoreboard_players.GetString(i, buffer, sizeof(buffer));
 	    client = Client_FindByUid(buffer);
 	    Format(str, sizeof(str), "%s, %s%s\x01",
 		str, Print_GetPlayerColor(client), Client_GetName(client));
 	}
-	scoreboard_players.GetString(scoreboard_players.Length-1, buffer, sizeof(buffer));
+	scoreboard_players.GetString(numLeaders-1, buffer, sizeof(buffer));
 	client = Client_FindByUid(buffer);
 	Format(str, sizeof(str), "%s, and %s%s\x01",
 	    str, Print_GetPlayerColor(client), Client_GetName(client));
