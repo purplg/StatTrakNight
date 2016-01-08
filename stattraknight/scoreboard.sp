@@ -6,6 +6,7 @@ public int MenuHandler(Menu menu, MenuAction action, int param1, int param2) {
 
 Action Scoreboard_Show(int client) {
     Menu menu = new Menu(MenuHandler);
+    menu.ExitButton = false;
     menu.SetTitle("StatTrakNight Scoreboard");
     for (int i = 0; i < scoreboard_players.Length; i++) {
 	char uid[32];
@@ -26,6 +27,11 @@ Action Scoreboard_Show(int client) {
 	char entry[64];
 	Format(entry, sizeof(entry), "%s [%i points]", name, points);
 	menu.AddItem("", entry);
+    }
+    if (scoreboard_players.Length == 0) {
+	menu.AddItem("", "No one has any points");
+    } else if (scoreboard_players.Length < 10) {
+	menu.Pagination = false;
     }
     menu.Display(client, 20);
 
