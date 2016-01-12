@@ -31,10 +31,10 @@ ArrayList scoreboard_points;
 #include "stattraknight/scoreboard.sp"
 
 public void OnPluginStart() {
-    Funcommands_OnPluginStart();
     scoreboard_players = CreateArray(32);
     scoreboard_points = CreateArray();
 
+    Funcommands_OnPluginStart();
     Sounds_Load();
     Weapons_Load();
 
@@ -56,7 +56,7 @@ public Action Command_stattrak_scoreboard(int client, int args) {
 
 public Action Command_stattrak_points(int client, int args) {
     int points = Points_Get(client);
-    PrintClient(client, "\x04You have %i point%s.", points, Format_Plural(points));
+    PrintClient(client, "You have %i point%s.", points, Format_Plural(points));
     return Plugin_Handled;
 }
 

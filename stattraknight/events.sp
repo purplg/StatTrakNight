@@ -18,7 +18,9 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	CT_TARGET = BeaconRandom(3);
 
 	Print_Leaders();
-	PrintAll("\x0D%s\x01 and \x09%s\x01 are the targets.", Client_GetName(CT_TARGET), Client_GetName(T_TARGET));
+	PrintAll("%s%s\x01 and %s%s\x01 are the targets.",
+	    Print_GetPlayerColor(CT_TARGET), Client_GetName(CT_TARGET),
+	    Print_GetPlayerColor(T_TARGET) ,Client_GetName(T_TARGET));
 	PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
     }
 }
@@ -28,9 +30,7 @@ public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
 	starting = false;
 	running = true;
 	stopping = false;
-
-	PrintAll("\x04Starting StatTrak Event in 5 seconds...");
-	InsertServerCommand("mp_restartgame 5");
+	Game_Start(0, 5);
     } else if (stopping) {
 	Game_FullStop();
     }

@@ -7,26 +7,23 @@
 */
 void Game_Start(int client, int time=0) {
     if (starting) {
-	if (time > 0) {
-	    PrintAll("\x04Starting StatTrak event in %i second%s.", time, Format_Plural(time));
-	    InsertServerCommand("mp_restartgame %i", time);
-	    InsertServerCommand("mp_warmup_end");
-	} else {
-	    Client_Reply(client, "\x04StatTrak event already starting next round.");
-	}
+	Reply(client, "Event already starting next round.");
     } else if (stopping) {
 	stopping = false;
-	PrintAll("\x04StatTrak Night set to continue.");
+	PrintAll("Event set to continue.");
     } else if (running) {
-	Client_Reply(client, "\x04StatTrak event already running.");
+	Reply(client, "Event already running.");
     } else {
 	starting = true;
 	if (time > 0) {
-	    PrintAll("\x04Starting StatTrak event in %i second%s.", time, Format_Plural(time));
-	    InsertServerCommand("mp_restartgame %i", time);
-	    InsertServerCommand("mp_warmup_end");
+	    PrintAll("Starting event in %i second%s.", time, Format_Plural(time));
+	    if (GameRules_GetProp("m_bWarmupPeriod")) {
+		Game_WarmupRestart(time);
+	    } else {
+		InsertServerCommand("mp_restartgame %i", time);
+	    }
 	} else {
-	    Reply(client, "\x04Starting StatTrak event next round.");
+	    Reply(client, "Starting event next round.");
 	}
     }
 }
@@ -40,40 +37,44 @@ void Game_Start(int client, int time=0) {
 */
 void Game_Stop(client=0, time=0) {
     if (stopping) {
-	if (time > 0) {
-	    PrintAll("\x04Stopping StatTrak event in %i seconds.", time);
-	    InsertServerCommand("mp_restartgame %i", time);
-	    InsertServerCommand("mp_warmup_end");
-	} else {
-	    Reply(client, "\x04StatTrak event already starting next round.");
-	}
+	Reply(client, "Event already stopping next round.");
     } else if (starting) {
 	starting = false;
-	PrintAll("\x04StatTrak Event cancelled for next round.");
+	PrintAll("Event cancelled for next round.");
     } else if (running) {
 	stopping = true;
 	if (time > 0) {
-	    PrintAll("\x04Stopping StatTrak event in %i seconds.", time);
-	    InsertServerCommand("mp_restartgame %i", time);
-	    InsertServerCommand("mp_warmup_end");
+	    PrintAll("Stopping event in %i second%s.", time, Format_Plural(time));
+	    if (GameRules_GetProp("m_bWarmupPeriod")) {
+		Game_WarmupRestart(time);
+	    } else {
+		InsertServerCommand("mp_restartgame %i", time);
+	    }
 	} else {
-	    PrintAll("\x04StatTrak Night will end next round.");
+	    PrintAll("Event will end next round.");
 	}
     } else {
-	Reply(client, "\x04There isn't a StatTrak Event running.");
+	Reply(client, "There isn't an event running.");
     }
 }
 
 void Game_FullStop() {
-    running = false;
-    stopping = false;
-    starting = false;
     Print_Winners();
     Game_Reset();
 }
 
 void Game_Reset() {
+    running = false;
+    stopping = false;
+    starting = false;
     scoreboard_players.Clear();
     scoreboard_points.Clear();
 }
 
+void Game_WarmupRestart(int time) {
+    CreateTimer(float(time), Game_StopWarmup);
+}
+
+public Action Game_StopWarmup(Handle timer) {
+    InsertServerCommand("mp_warmup_end");
+}

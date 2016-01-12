@@ -63,10 +63,11 @@ void PrintAll(const char[] msg, any:...) {
     char buffer[512];
     VFormat(buffer, sizeof(buffer), msg, 2);
     PrintToChatAll("%s %s", prefix, buffer);
+    PrintToServer("%s %s", prefix, buffer);
 }
 
 void Reply(int client, const char[] msg, any:...) {
     char buffer[254];
     VFormat(buffer, sizeof(buffer), msg, 3);
-    ReplyToCommand(client, "%s %s", prefix, buffer);
+    Client_Reply(client, "%s %s", prefix, buffer);
 }
