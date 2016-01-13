@@ -16,6 +16,7 @@ const int TEAM_T = 2, TEAM_CT = 3;
 int T_TARGET, CT_TARGET;
 bool starting, stopping, running;
 
+ArrayList optout_players;
 ArrayList scoreboard_players;
 ArrayList scoreboard_points;
 
@@ -31,6 +32,7 @@ ArrayList scoreboard_points;
 #include "stattraknight/scoreboard.sp"
 
 public void OnPluginStart() {
+    optout_players = CreateArray(32);
     scoreboard_players = CreateArray(32);
     scoreboard_points = CreateArray();
 
@@ -40,6 +42,8 @@ public void OnPluginStart() {
 
     RegConsoleCmd("sm_st", Command_stattrak_scoreboard, "sm_st");
     RegConsoleCmd("sm_st_points", Command_stattrak_points, "sm_st_points");
+    RegConsoleCmd("sm_st_optout", Command_stattrak_optout, "sm_st_optout");
+    RegConsoleCmd("sm_st_optin", Command_stattrak_optin, "sm_st_optin");
     RegAdminCmd("sm_st_start", Command_stattrak_start, ADMFLAG_SLAY, "sm_st_start  [time]");
     RegAdminCmd("sm_st_stop", Command_stattrak_stop, ADMFLAG_SLAY, "sm_st_stop [time]");
     HookEvent("round_start", Event_RoundStart);
@@ -47,6 +51,29 @@ public void OnPluginStart() {
     HookEvent("player_death", Event_PlayerDeath);
     HookEvent("cs_win_panel_match", Event_EndMatch);
     HookEvent("bot_takeover", Event_BotTakeover);
+}
+
+public Action Command_stattrak_optin(int client, int args) {
+    if (Client_IsValid(client)) {
+	int index = optout_players.FindValue(client);
+	if (index > -1) {
+	    optout_players.Erase(index);
+	} else {
+	    Reply(client, "You are already opted in.");
+	}
+    }
+    return Plugin_Handled;
+}
+
+public Action Command_stattrak_optout(int client, int args) {
+    if (Client_IsValid(client)) {
+	if (optout_players.FindValue(client) == -1) {
+	    optout_players.Push(client);
+	} else {
+	    Reply(client, "You already opted out");
+	}
+    }
+    return Plugin_Handled;
 }
 
 public Action Command_stattrak_scoreboard(int client, int args) {
