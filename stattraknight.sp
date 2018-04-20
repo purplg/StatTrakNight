@@ -40,10 +40,14 @@ public void OnPluginStart() {
     Sounds_Load();
     Weapons_Load();
 
-    RegConsoleCmd("sm_st", Command_scoreboard, "sm_st");
+    RegConsoleCmd("sm_st", Command_stattrak, "sm_st");
     RegConsoleCmd("sm_st_points", Command_points, "sm_st_points");
     RegConsoleCmd("sm_st_optout", Command_optout, "sm_st_optout");
     RegConsoleCmd("sm_st_optin", Command_optin, "sm_st_optin");
+    RegAdminCmd("sm_st", Command_start, ADMFLAG_SLAY, "sm_st <start|stop> [time]");
+    RegAdminCmd("sm_st_points", Command_start, ADMFLAG_SLAY, "sm_st_points");
+    RegAdminCmd("sm_st_optout", Command_start, ADMFLAG_SLAY, "sm_st_optout");
+    RegAdminCmd("sm_st_optin", Command_start, ADMFLAG_SLAY, "sm_st_optin");
     RegAdminCmd("sm_st_start", Command_start, ADMFLAG_SLAY, "sm_st_start  [time]");
     RegAdminCmd("sm_st_stop", Command_stop, ADMFLAG_SLAY, "sm_st_stop [time]");
     HookEvent("round_start", Event_RoundStart);
@@ -74,6 +78,32 @@ public Action Command_optout(int client, int args) {
 	}
     }
     return Plugin_Handled;
+}
+
+public Action Command_stattrak(int client, int args) {
+	if (GetCmdArgs() == 0) {
+		Scoreboard_Show(client); 
+		return Plugin_Handled;
+	} else {
+		char arg[32];
+		GetCmdArg(1, arg, sizeof(arg));
+
+		if (StrEqual(arg, "start", false)) {
+				GetCmdArg(2, arg, sizeof(arg));
+				Game_Start(client, StringToInt(arg));
+				return Plugin_Handled;
+
+		} else if (StrEqual(arg, "stop", false)) {
+			GetCmdArg(1, arg, sizeof(arg));
+			Game_Stop(client, StringToInt(arg));
+			return Plugin_Handled;
+
+		} else if (StrEqual(arg, "points", false)) {
+			int points = Points_Get(client);
+			PrintClient(client, "You have %i point%s.", points, Format_Plural(points));
+		}
+	}
+	return Plugin_Handled;
 }
 
 public Action Command_scoreboard(int client, int args) {

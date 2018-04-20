@@ -89,22 +89,23 @@ KeyValues Weapons_New(bool write=true) {
 }
 
 void Weapon_NewGroup() {
-    int rand = Math_GetRandomInt(0, weapon_numGroups-1);
-    kv.Rewind();
-    kv.JumpToKey("groups");
-    kv.GotoFirstSubKey();
-    for (int i = 0; i < rand; i++) {
-	kv.GotoNextKey();
-    }
-    kv.GetSectionName(weapon_targetGroup, 32);
+	int rand = Math_GetRandomInt(0, weapon_numGroups-1);
+	kv.Rewind();
+	kv.JumpToKey("groups");
+	kv.GotoFirstSubKey();
+	for (int i = 0; i < rand; i++) {
+		kv.GotoNextKey();
+	}
+	kv.GetSectionName(weapon_targetGroup, 32);
 }
 
 bool Weapons_IsTargetGroup(const char[] weapon) {
     if (strcmp("taser", weapon) == 0 ||
-    strcmp("knife_default_ct", weapon) == 0 ||
-    strcmp("knife_default_t", weapon) == 0 ||
-    strcmp("knife_t", weapon) == 0) {
-	return true;
+		strcmp("knife_default_ct", weapon) == 0 ||
+		strcmp("knife_default_t", weapon) == 0 ||
+		strcmp("knife_t", weapon) == 0) {
+
+		return true;
     }
     kv.Rewind();
     kv.JumpToKey("groups", false);
