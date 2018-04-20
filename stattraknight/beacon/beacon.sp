@@ -35,38 +35,6 @@ new g_BeaconSerial[MAXPLAYERS+1] = { 0, ... };
 
 ConVar g_Cvar_BeaconRadius;
 
-CreateBeacon(client)
-{
-	g_BeaconSerial[client] = ++g_Serial_Gen;
-	CreateTimer(1.0, Timer_Beacon, client | (g_Serial_Gen << 7), DEFAULT_TIMER_FLAGS);
-}
-
-KillBeacon(client)
-{
-	g_BeaconSerial[client] = 0;
-
-	if (IsClientInGame(client))
-	{
-		SetEntityRenderColor(client, 255, 255, 255, 255);
-	}
-}
-
-KillAllBeacons()
-{
-	for (new i = 1; i <= MaxClients; i++)
-	{
-		KillBeacon(i);
-	}
-}
-
-PerformBeacon(target)
-{
-	if (g_BeaconSerial[target] == 0)
-	{
-		CreateBeacon(target);
-	}
-}
-
 BeaconRandom(team) {
 	new flag;
 	if (team == 2) {
@@ -79,6 +47,38 @@ BeaconRandom(team) {
 	new target = Client_GetRandom(flag);
 	PerformBeacon(target);
 	return target;
+}
+
+void CreateBeacon(client)
+{
+	g_BeaconSerial[client] = ++g_Serial_Gen;
+	CreateTimer(1.0, Timer_Beacon, client | (g_Serial_Gen << 7), DEFAULT_TIMER_FLAGS);
+}
+
+void KillBeacon(client)
+{
+	g_BeaconSerial[client] = 0;
+
+	if (IsClientInGame(client))
+	{
+		SetEntityRenderColor(client, 255, 255, 255, 255);
+	}
+}
+
+void KillAllBeacons()
+{
+	for (new i = 1; i <= MaxClients; i++)
+	{
+		KillBeacon(i);
+	}
+}
+
+void PerformBeacon(target)
+{
+	if (g_BeaconSerial[target] == 0)
+	{
+		CreateBeacon(target);
+	}
 }
 
 public Action:Timer_Beacon(Handle:timer, any:value)

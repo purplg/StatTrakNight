@@ -1,57 +1,73 @@
-print_leaders() {
-	if (topPoints > 0) {
-		if (GetArraySize(winners) == 1) {
-			Client_PrintToChatAll(false, "[ST] %s%s\x01 is leading with \x04[%i point%s]",
-				Chat_GetPlayerColor(GetArrayCell(winners, 0)),
-				GetName(GetArrayCell(winners, 0)),
-				topPoints,
-				plural(topPoints));
-		} else if (GetArraySize(winners) > 1) {
-			Client_PrintToChatAll(false, "[ST] %s\x01 are leading with \x04[%i point%s]",
-				format_tie_message(),
-				topPoints,
-				plural(topPoints));
-		}
-	} else {
-		Client_PrintToChatAll(false, "[ST] No one has scored any points yet.");
-	}
+char prefix[] = "[ \x03StatTrakNight\x01 ]";
+
+void Print_Leaders() {
+    int numLeaders = Points_GetNumLeaders();
+
+    if (numLeaders == 0) {
+	PrintAll("No one has scored any points yet.");
+    } else if (numLeaders == 1) {
+	int points = scoreboard_points.Get(0);
+	PrintAll("%s is leading with %i point%s",
+	    Format_Tie(numLeaders),
+	    points,
+	    Format_Plural(points));
+    } else {
+	int points = scoreboard_points.Get(0);
+	PrintAll("%s are leading with %i point%s",
+	    Format_Tie(numLeaders),
+	    points,
+	    Format_Plural(points));
+    }
 }
 
-print_winners() {
-	if (topPoints > 0) {
-		if (GetArraySize(winners) == 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s",
-				GetName(GetArrayCell(winners, 0)), topPoints, plural(topPoints));
-		} else if (GetArraySize(winners) > 1) {
-			Client_PrintToChatAll(false, "[ST] \x04%s won with %i point%s",
-				format_tie_message(), topPoints, plural(topPoints));
-		}
-	} else {
-		Client_PrintToChatAll(false, "[ST] \x04No one won.");
-	}
+void Print_Winners() {
+    int numWinners = Points_GetNumLeaders();
+
+    if (numWinners == 0) {
+	PrintAll("No one won.");
+    } else {
+	int points = scoreboard_points.Get(0);
+	PrintAll("%s won with %i point%s",
+	    Format_Tie(numWinners),
+	    points,
+	    Format_Plural(points));
+    }
 }
 
-String:format_tie_message() {
-	decl String:str[255];
-	if (GetArraySize(winners) == 1) {
-		Format(str, sizeof(str), "%s%s\x01",
-		Chat_GetPlayerColor(GetArrayCell(winners, 0)), GetName(GetArrayCell(winners, 0)));
-	} else if (GetArraySize(winners) == 2) {
-		Format(str, sizeof(str), "%s%s\x01 and %s%s\x01",
-			Chat_GetPlayerColor(GetArrayCell(winners, 0)), GetName(GetArrayCell(winners, 0)),
-			Chat_GetPlayerColor(GetArrayCell(winners, 1)), GetName(GetArrayCell(winners, 1)));
-	} else {
-		Format(str, sizeof(str), "%s%s\x01, %s%s\x01",
-			Chat_GetPlayerColor(GetArrayCell(winners, 0)), GetName(GetArrayCell(winners, 0)),
-			Chat_GetPlayerColor(GetArrayCell(winners, 1)), GetName(GetArrayCell(winners, 1)));
-		for (new i = 2; i < GetArraySize(winners)-1; i++) {
-			Format(str, sizeof(str), "%s, %s%s\x01",
-				str, Chat_GetPlayerColor(GetArrayCell(winners, i)), GetName(GetArrayCell(winners, i)));
-		}
-		Format(str, sizeof(str), "%s, and %s%s\x01",
-		str,
-		Chat_GetPlayerColor(GetArrayCell(winners, GetArraySize(winners)-1)),
-		GetName(GetArrayCell(winners, GetArraySize(winners)-1)));
+char[] Print_GetPlayerColor(int client) {
+    char buffer[5];
+    switch (GetClientTeam(client)) {
+	case TEAM_T: {
+	    buffer = "\x09";
 	}
-	return str;
+	case TEAM_CT: {
+	    buffer = "\x0D";
+	}
+    }
+    return buffer;
+}
+
+void PrintServer(const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToServer("%s %s", prefix, buffer);
+}
+
+void PrintClient(int client, const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    PrintToChat(client, "%s %s", prefix, buffer);
+}
+
+void PrintAll(const char[] msg, any:...) {
+    char buffer[512];
+    VFormat(buffer, sizeof(buffer), msg, 2);
+    PrintToChatAll("%s %s", prefix, buffer);
+    PrintToServer("%s %s", prefix, buffer);
+}
+
+void Reply(int client, const char[] msg, any:...) {
+    char buffer[254];
+    VFormat(buffer, sizeof(buffer), msg, 3);
+    Client_Reply(client, "%s %s", prefix, buffer);
 }

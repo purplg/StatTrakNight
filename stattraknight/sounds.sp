@@ -1,11 +1,11 @@
-new String:youkillSound[PLATFORM_MAX_PATH];
-new String:theyKillSound[PLATFORM_MAX_PATH];
+char youkillSound[PLATFORM_MAX_PATH];
+char theyKillSound[PLATFORM_MAX_PATH];
 
-Sounds_Load() {
-	youkillSound = "ui/deathnotice.wav";
-	theyKillSound = "ui/bonus_alert_end.wav";
-	PrecacheSound(youkillSound, true);
-	PrecacheSound(theyKillSound, true);
+void Sounds_Load() {
+    youkillSound = "ui/deathnotice.wav";
+    theyKillSound = "ui/bonus_alert_end.wav";
+    PrecacheSound(youkillSound, true);
+    PrecacheSound(theyKillSound, true);
 }
 
 /**
@@ -15,26 +15,26 @@ Sounds_Load() {
  * @param client	The attacker that got the kill
  * @noreturn
  */
-Sounds_PlayKill(client) {
-	new team = GetClientTeam(client);
-	new flag;
-	if (team == 2) { // T
-		flag = CLIENTFILTER_TEAMONE;
-	} else if (team == 3) { // CT
-			flag = CLIENTFILTER_TEAMTWO;
+void Sound_PlayKill(int client) {
+    int team = GetClientTeam(client);
+    int flag;
+    if (team == 2) { // T
+	flag = CLIENTFILTER_TEAMONE;
+    } else if (team == 3) { // CT
+	flag = CLIENTFILTER_TEAMTWO;
+    }
+    if (flag != 0) {
+	int size = Team_GetClientCount(team);
+	int[] clients = new int[size];
+	Client_Get(clients, flag);
+	for (int i = 0; i < size; i++) {
+	    if (clients[i] == client) {
+		size -= 1;
+		clients[i] = clients[size];
+		break;
+	    }
 	}
-	if (flag != 0) {
-		new size = Team_GetClientCount(team);
-		new clients[size];
-		Client_Get(clients, flag);
-		for (new i = 0; i < size; i++) {
-			if (clients[i] == client) {
-				size -= 1;
-				clients[i] = clients[size];
-				break;
-			}
-		}
-		EmitSoundToClient(client, youkillSound);
-		EmitSound(clients, size, theyKillSound);
-	}
+	EmitSoundToClient(client, youkillSound);
+	EmitSound(clients, size, theyKillSound);
+    }
 }

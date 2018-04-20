@@ -1,6 +1,6 @@
 # StatTrak Night
 
-A CS:GO plugin for automating [GreatDivideGaming](https://www.greatdividegaming.com/)'s CS:GO StatTrak Night event.
+A Sourcemod plugin for automating a beacon hunting event in CS:GO.
 
 # Requirements
 
@@ -20,11 +20,14 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 
 > **Note:** Just like most SourceMod plugins, `sm_statrak` in console is the equivalent of `!stattrak` and `/stattrak` in chat. The only difference is that the `!` shows up in chat while the `/` does not.
 
-| Command 						| Action 									|
-|-------------------------------|-------------------------------------------|
-| sm_stattrak					| Shows your points							|
-| sm_stattrak_start [seconds]	| Start on next round or after # [seconds]	|
-| sm_stattrak_stop [seconds]	| Stop on next round or after # [seconds]	|
+| Command               | Action                                    |
+|-----------------------|-------------------------------------------|
+| sm_st                 | Shows the scoreboard                      |
+| sm_st start [seconds]	| Start on next round or after # [seconds]	|
+| sm_st stop [seconds]	| Stop on next round or after # [seconds]   |
+| sm_st points          | Prints your points                        |
+| sm_st optout          | Opt out of the game                       |
+| sm_st optin           | Opt back into the game                    |
 
 # License
 

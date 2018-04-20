@@ -1,41 +1,54 @@
-new ArrayList:winners;
-new topPoints;
-
-int getPoints(client) {
-		decl String:strBuffer[3];
-		GetClientCookie(client, cookie_points, strBuffer, 3);
-		return StringToInt(strBuffer);
+int Points_Get(int client) {
+    char uid[32];
+    Client_GetUId(client, uid, sizeof(uid));
+    int player_index = scoreboard_players.FindString(uid);
+    if (player_index == -1) {
+	return 0;
+    } else {
+	return scoreboard_points.Get(player_index);
+    }
 }
 
-int addPoint(client) {
-	decl String:strBuffer[3];
-	GetClientCookie(client, cookie_points, strBuffer, 3);
-	new points = StringToInt(strBuffer) + 1;
-	IntToString(points, strBuffer, 3);
-	SetClientCookie(client, cookie_points, strBuffer);
-	Sounds_PlayKill(client);
-	return points;
-}
+int Points_Add(int client) {
+    char uid[32];
+    Client_GetUId(client, uid, sizeof(uid));
 
-update_winners() {
-	new	size = Client_GetCount(),
-		players[size];
-	Client_Get(players, CLIENTFILTER_INGAME);
+    int points = 1;
+    int player_index = scoreboard_players.FindString(uid);
+    if (player_index == -1) {
+	scoreboard_players.PushString(uid);
+	scoreboard_points.Push(1);
+    } else {
+	points = scoreboard_points.Get(player_index)+1;
+	scoreboard_points.Set(player_index, points);
 
-	ClearArray(winners);
-	topPoints = 0;
-	for (new i; i < size; i++) {
-		if (players[i] != 0) {
-			new points = getPoints(players[i]);
-			if (points == 0) continue;
-
-			if (points > topPoints) {
-				ClearArray(winners);
-				PushArrayCell(winners, players[i]);
-				topPoints = points;
-			} else if (points == topPoints) {
-				PushArrayCell(winners, players[i]);
-			}
-		}
+	// Sort
+	int swap_index = player_index;
+	while (swap_index > 0 && points > scoreboard_points.Get(swap_index-1)) {
+	    swap_index--;
 	}
+	scoreboard_players.SwapAt(player_index, swap_index);
+	scoreboard_points.SwapAt(player_index, swap_index);
+    }
+
+    Sound_PlayKill(client);
+    return points;
+}
+
+int Points_GetNumLeaders() {
+    // Check if any winners
+    if (scoreboard_points.Length == 0) {
+	return 0;
+    }
+
+    // Count number of winners
+    int points = scoreboard_points.Get(0);
+    int numLeaders = 1;
+    while (numLeaders < scoreboard_points.Length) {
+	if (scoreboard_points.Get(numLeaders) < points) {
+	    break;
+	}
+	numLeaders++;
+    }
+    return numLeaders;
 }
