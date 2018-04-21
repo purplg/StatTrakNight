@@ -19,8 +19,8 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 
 		Print_Leaders();
 		PrintAll("%s%s\x01 and %s%s\x01 are the targets.",
-		Print_GetPlayerColor(CT_TARGET), Client_GetName(CT_TARGET),
-		Print_GetPlayerColor(T_TARGET), Client_GetName(T_TARGET));
+		Format_GetPlayerColor(CT_TARGET), Client_GetName(CT_TARGET),
+		Format_GetPlayerColor(T_TARGET), Client_GetName(T_TARGET));
 		PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
     }
 }
@@ -44,31 +44,44 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 			return;
 
 		if (victim == CT_TARGET || victim == T_TARGET) {
+			// Pick a new target if player suicides
 			if (victim == attacker) {
 				if (GetClientTeam(victim) == TEAM_CT)
 					CT_TARGET = BeaconRandom(TEAM_CT);
 				else if (GetClientTeam(victim) == TEAM_T)
 					T_TARGET = BeaconRandom(TEAM_T);
 
-				PrintAll("%s%s\x01 is the new target.", Print_GetPlayerColor(victim), Client_GetName(CT_TARGET));
-				return;
-			}
-			char weapon[32];
-			GetEventString(event, "weapon", weapon, 32);
-			if (Weapons_IsTargetGroup(weapon)) {
-				int points = Points_Add(attacker);
-				PrintAll("%s%s\x01 was killed by %s%s\x01 \x04[%i point%s]", Print_GetPlayerColor(victim),
-					Client_GetName(victim), Print_GetPlayerColor(attacker), Client_GetName(attacker), points, Format_Plural(points));
-				if (GetClientTeam(victim) == TEAM_CT)
-					CT_TARGET = -1;
-				else if (GetClientTeam(victim) == TEAM_T)
-					T_TARGET = -1;
+				PrintAll("%s%s\x01 is the new target.", Format_GetPlayerColor(victim), Client_GetName(CT_TARGET));
 			} else {
-				PrintAll("%s%s\x01 was killed with the wrong weapon.", Print_GetPlayerColor(victim),
-				Client_GetName(victim));
+
+				// Is player (not bot), then test if it's correct weapon
+				if (IsFakeClient(attacker)) {
+					char weapon[32];
+					GetEventString(event, "weapon", weapon, 32);
+					if (Weapons_IsTargetGroup(weapon)) {
+						TargetKilled(attacker, victim);
+					} else {
+						PrintAll("%s%s\x01 was killed with the wrong weapon.", Format_GetPlayerColor(victim),
+						Client_GetName(victim));
+					}
+				
+				// Bots can kill with any weapon
+				} else {
+					TargetKilled(attacker, victim);
+				}
 			}
 		}
     }
+}
+
+void TargetKilled(int attacker, int victim) {
+	int points = Points_Add(attacker);
+	Print_TargetKilled(attacker, victim, points);
+
+	if (GetClientTeam(victim) == TEAM_CT)
+		CT_TARGET = -1;
+	else if (GetClientTeam(victim) == TEAM_T)
+		T_TARGET = -1;
 }
 
 public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {

@@ -1,5 +1,15 @@
 char prefix[] = "[ \x03StatTrakNight\x01 ]";
 
+void Print_TargetKilled(int attacker, int victim, int points) {
+	PrintAll("%s%s\x01 was killed by %s%s\x01 \x04[%i point%s]",
+		Format_GetPlayerColor(victim),
+		Client_GetName(victim),
+		Format_GetPlayerColor(attacker),
+		Client_GetName(attacker),
+		points,
+		Format_Plural(points));
+}
+
 void Print_Leaders() {
     int numLeaders = Points_GetNumLeaders();
 
@@ -34,7 +44,7 @@ void Print_Winners() {
     }
 }
 
-char[] Print_GetPlayerColor(int client) {
+char[] Format_GetPlayerColor(int client) {
     char buffer[5];
     switch (GetClientTeam(client)) {
 	case TEAM_T: {
