@@ -62,7 +62,6 @@ public Action Command_stattrak(int client, int args) {
 		GetCmdArg(1, arg, sizeof(arg));
 
 		if (StrEqual(arg, "start", false)) {
-			PrintAll("Command_stattrak start");
 			GetCmdArg(2, arg, sizeof(arg));
 			Game_Start(client, StringToInt(arg));
 			return Plugin_Handled;

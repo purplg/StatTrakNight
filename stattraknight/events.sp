@@ -55,7 +55,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 			} else {
 
 				// Is player (not bot), then test if it's correct weapon
-				if (IsFakeClient(attacker)) {
+				if (!IsFakeClient(attacker)) {
 					char weapon[32];
 					GetEventString(event, "weapon", weapon, 32);
 					if (Weapons_IsTargetGroup(weapon)) {
