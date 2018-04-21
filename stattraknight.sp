@@ -68,7 +68,7 @@ public Action Command_stattrak(int client, int args) {
 			return Plugin_Handled;
 
 		} else if (StrEqual(arg, "stop", false)) {
-			GetCmdArg(1, arg, sizeof(arg));
+			GetCmdArg(2, arg, sizeof(arg));
 			Game_Stop(client, StringToInt(arg));
 			return Plugin_Handled;
 
