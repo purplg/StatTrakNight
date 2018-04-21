@@ -1,25 +1,29 @@
+public void Event_PlayerScore(Event event, const char[] name, bool dontBroadcast) {
+	PrintAll("ya");
+}
+
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-	if (StrContains(sArgs, "!st", false) == 0) {
+	if (StrContains(sArgs, "!st ", false) == 0) {
 		return Plugin_Handled;
 	}
 	return Plugin_Continue;
 }
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
-    Funcommands_Event_RoundStart();
-    if (starting) {
+	Funcommands_Event_RoundStart();
+	if (starting) {
 		starting = false;
 		running = true;
 		stopping = false;
 		Weapon_NewGroup();
-    }
-    if (stopping) {
+	}
+	if (stopping) {
 		Game_FullStop();
-    }
-    if (starting && GameRules_GetProp("m_bWarmupPeriod")) {
+	}
+	if (starting && GameRules_GetProp("m_bWarmupPeriod")) {
 		return;
-    }
-    if (running) {
+	}
+	if (running) {
 		PrintAll("\x04This is a beta version of the StatTrakNight plugin. Expect bugs.");
 		T_TARGET = BeaconRandom(2);
 		CT_TARGET = BeaconRandom(3);
@@ -29,22 +33,22 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 		Format_GetPlayerColor(CT_TARGET), Client_GetName(CT_TARGET),
 		Format_GetPlayerColor(T_TARGET), Client_GetName(T_TARGET));
 		PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
-    }
+	}
 }
 
 public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
-    if (starting) {
+	if (starting) {
 		starting = false;
 		running = true;
 		stopping = false;
 		Game_Start(0, 5);
-    } else if (stopping) {
+	} else if (stopping) {
 		Game_FullStop();
-    }
+	}
 }
 
 public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-    if (running) {
+	if (running) {
 		int victim = GetClientOfUserId(GetEventInt(event, "userid"));
 		int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 		if (!Client_IsValid(attacker))
@@ -78,7 +82,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 				}
 			}
 		}
-    }
+	}
 }
 
 void TargetKilled(int attacker, int victim) {
@@ -92,22 +96,22 @@ void TargetKilled(int attacker, int victim) {
 }
 
 public void Event_EndMatch(Event event, const char[] name, bool dontBroadcast) {
-    if (running) {
+	if (running) {
 		Game_FullStop();
-    }
+	}
 }
 
 public void Event_BotTakeover(Event event, const char[] name, bool dontBroadcast) {
-    int bot = GetClientOfUserId(GetEventInt(event, "botid"));
+	int bot = GetClientOfUserId(GetEventInt(event, "botid"));
 
-    if (bot == T_TARGET) {
+	if (bot == T_TARGET) {
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		T_TARGET = client;
 		PerformBeacon(T_TARGET);
-    } else if(bot == CT_TARGET) {
+	} else if(bot == CT_TARGET) {
 		int client = GetClientOfUserId(GetEventInt(event, "userid"));
 		CT_TARGET = client;
 		PerformBeacon(CT_TARGET);
-    }
+	}
 }
 

@@ -36,12 +36,12 @@ void Game_Start(int client, int time=0) {
 * @noreturn
 */
 void Game_Stop(client=0, time=0) {
-    if (stopping) {
+	if (stopping) {
 		Reply(client, "Event already stopping next round.");
-    } else if (starting) {
+	} else if (starting) {
 		starting = false;
 		PrintAll("Event cancelled for next round.");
-    } else if (running) {
+	} else if (running) {
 		stopping = true;
 		if (time > 0) {
 			PrintAll("Stopping event in %i second%s.", time, Format_Plural(time));
@@ -53,28 +53,30 @@ void Game_Stop(client=0, time=0) {
 		} else {
 			PrintAll("Event will end next round.");
 		}
-    } else {
+	} else {
 		Reply(client, "There isn't an event running.");
-    }
+	}
 }
 
 void Game_FullStop() {
-    Print_Winners();
-    Game_Reset();
+	if ( running ) {
+		Print_Winners();
+	}
+	Game_Reset();
 }
 
 void Game_Reset() {
-    running = false;
-    stopping = false;
-    starting = false;
-    scoreboard_players.Clear();
-    scoreboard_points.Clear();
+	running = false;
+	stopping = false;
+	starting = false;
+	scoreboard_players.Clear();
+	scoreboard_points.Clear();
 }
 
 void Game_WarmupRestart(int time) {
-    CreateTimer(float(time), Game_StopWarmup);
+	CreateTimer(float(time), Game_StopWarmup);
 }
 
 public Action Game_StopWarmup(Handle timer) {
-    InsertServerCommand("mp_warmup_end");
+	InsertServerCommand("mp_warmup_end");
 }
