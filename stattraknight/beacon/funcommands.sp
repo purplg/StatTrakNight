@@ -40,8 +40,8 @@
 new String:g_BlipSound[PLATFORM_MAX_PATH];
 
 // Following are model indexes for temp entities
-new g_BeamSprite        = -1;
-new g_HaloSprite        = -1;
+new g_BeamSprite = -1;
+new g_HaloSprite = -1;
 
 // Basic color arrays for temp entities
 new redColor[4]		= {255, 75, 75, 255};
