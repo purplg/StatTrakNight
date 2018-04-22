@@ -30,6 +30,7 @@ ArrayList scoreboard_points;
 #include "stattraknight/events.sp"
 #include "stattraknight/announcements.sp"
 #include "stattraknight/scoreboard.sp"
+#include "stattraknight/menu.sp"
 #include "stattraknight/commands.sp"
 
 public void OnPluginStart() {

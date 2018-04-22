@@ -1,11 +1,11 @@
-public int MenuHandler(Menu menu, MenuAction action, int param1, int param2) {
+public int ScoreboardMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
 	if (action == MenuAction_End) {
 		CloseHandle(menu);
 	}
 }
 
 Action Scoreboard_Show(int client) {
-	Menu menu = new Menu(MenuHandler);
+	Menu menu = new Menu(ScoreboardMenuHandler);
 	menu.ExitButton = false;
 	menu.SetTitle("StatTrakNight Scoreboard");
 	for (int i = 0; i < scoreboard_players.Length; i++) {

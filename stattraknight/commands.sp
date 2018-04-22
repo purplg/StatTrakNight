@@ -1,6 +1,7 @@
 public Action Command_stattrak(int client, int args) {
 	if (GetCmdArgs() == 0) {
-		Scoreboard_Show(client); 
+		//Scoreboard_Show(client); 
+		Menu_Show(client);
 		return Plugin_Handled;
 	} else {
 		char arg[32];
@@ -62,6 +63,8 @@ public Action Command_stattrak(int client, int args) {
 		// st_status
 		} else if (StrEqual(arg, "status", false)) {
 			if (running) {
+				Print_NotImplemented(client);
+				return Plugin_Handled;
 				int index = optout_players.FindValue(client);
 				if (index > -1) {
 					Print_OptOut(client);
