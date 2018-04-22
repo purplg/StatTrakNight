@@ -2,6 +2,8 @@
 #include <clientprefs>
 #include <smlib>
 #include <sdktools>
+#undef REQUIRE_PLUGIN
+#include <adminmenu>
 
 public Plugin myinfo =
 {
@@ -19,6 +21,9 @@ bool starting, stopping, running;
 ArrayList optout_players;
 ArrayList scoreboard_players;
 ArrayList scoreboard_points;
+
+// Admin Menu
+TopMenu hTopMenu;
 
 #include "stattraknight/beacon/funcommands.sp"
 #include "stattraknight/format.sp"
@@ -47,6 +52,13 @@ public void OnPluginStart() {
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_EndMatch);
 	HookEvent("bot_takeover", Event_BotTakeover);
+
+	/* Account for late loading */
+	TopMenu topmenu;
+	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null))
+	{
+		OnAdminMenuReady(topmenu);
+	}
 }
 
 public void OnMapEnd() {

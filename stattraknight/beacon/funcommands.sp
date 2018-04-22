@@ -33,9 +33,6 @@
 
 #pragma semicolon 1
 
-#include <sdktools>
-#undef REQUIRE_PLUGIN
-
 // Sounds
 new String:g_BlipSound[PLATFORM_MAX_PATH];
 
