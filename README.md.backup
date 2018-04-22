@@ -23,8 +23,8 @@ Go to the [Releases](https://github.com/purplg/StatTrakNight/releases) section t
 | Command               | Action                                    |                 |
 |-----------------------|-------------------------------------------|-----------------|
 | sm_st                 | Shows the scoreboard                      |                 |
-| sm_st start [seconds] | Start on next round or after # [seconds]  |                 |
-| sm_st stop [seconds]  | Stop on next round or after # [seconds]   |                 |
+| sm_st start [seconds]	| Start on next round or after # [seconds]	|                 |
+| sm_st stop [seconds]	| Stop on next round or after # [seconds]   |                 |
 | sm_st points          | Prints your points                        |                 |
 | sm_st optout          | Opt out of the game                       | Not implemented |
 | sm_st optin           | Opt back into the game                    | Not implemented |
