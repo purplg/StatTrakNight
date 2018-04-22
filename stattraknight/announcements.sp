@@ -144,6 +144,10 @@ void Print_Winners() {
 	}
 }
 
+void Print_NotImplemented(int client) {
+	PrintClient(client, "Function is not yet implemented");
+}
+
 void PrintServer(const char[] msg, any:...) {
 	char buffer[254];
 	VFormat(buffer, sizeof(buffer), msg, 2);
