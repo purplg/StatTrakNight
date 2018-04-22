@@ -7,7 +7,12 @@
 */
 void Game_Start(int client, int time=0) {
 	if (starting) {
-		Print_AlreadyStarting(client);
+		if (time > 0) {
+			Print_Starting(time);
+			restartMatch(time);
+		} else {
+			Print_AlreadyStarting(client);
+		}
 	} else if (stopping) {
 		stopping = false;
 		Print_Continue();
