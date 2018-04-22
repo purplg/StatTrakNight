@@ -1,10 +1,3 @@
-public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-	if (StrContains(sArgs, "!st ", false) == 0) {
-		return Plugin_Handled;
-	}
-	return Plugin_Continue;
-}
-
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast) {
 	Funcommands_Event_RoundStart();
 	if (starting) {
