@@ -8,7 +8,7 @@ public Plugin myinfo =
 	name = "StatTrak Night",
 	author = "Ben Whitley",
 	description = "A plugin to automate StatTrak Night events",
-	version = "0.9.7",
+	version = "0.9.8",
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
