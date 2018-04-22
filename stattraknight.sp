@@ -8,11 +8,11 @@ public Plugin myinfo =
 	name = "StatTrak Night",
 	author = "Ben Whitley",
 	description = "A plugin to automate StatTrak Night events",
-	version = "0.9.7",
+	version = "0.9.8",
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
-const int TEAM_T = 2, TEAM_CT = 3;
+const int T_TEAM = 2, CT_TEAM = 3;
 int T_TARGET, CT_TARGET;
 bool starting, stopping, running;
 
@@ -42,11 +42,9 @@ public void OnPluginStart() {
 
 	RegAdminCmd("sm_st", Command_stattrak, ADMFLAG_SLAY, "sm_st <start|stop> [time]");
 	HookEvent("round_start", Event_RoundStart);
-	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("cs_win_panel_match", Event_EndMatch);
 	HookEvent("bot_takeover", Event_BotTakeover);
-	HookEvent("player_score", Event_PlayerScore);
 }
 
 public Action Command_stattrak(int client, int args) {
@@ -69,10 +67,15 @@ public Action Command_stattrak(int client, int args) {
 			Game_Stop(client, StringToInt(arg));
 			return Plugin_Handled;
 
+		// st_restart
+		} else if (StrEqual(arg, "restart", false)) {
+			GetCmdArg(2, arg, sizeof(arg));
+			Game_Restart(StringToInt(arg));
+			return Plugin_Handled;
+
 		// st_points
 		} else if (StrEqual(arg, "points", false)) {
-			int points = Points_Get(client);
-			PrintClient(client, "You have %i point%s.", points, Format_Plural(points));
+			Print_Points(client);
 			return Plugin_Handled;
 
 		// st_optout
@@ -81,9 +84,9 @@ public Action Command_stattrak(int client, int args) {
 				if (optout_players.FindValue(client) == -1) {
 					optout_players.Push(client);
 					// TODO Detect last player to optout and stop game
-					Reply(client, "You are now opted out");
+					Print_OptOut(client);
 				} else {
-					Reply(client, "You are already opted out");
+					Print_AlreadyOptOut(client);
 				}
 			}
 			return Plugin_Handled;
@@ -94,9 +97,9 @@ public Action Command_stattrak(int client, int args) {
 				int index = optout_players.FindValue(client);
 				if (index > -1) {
 					optout_players.Erase(index);
-					Reply(client, "You are now opted in.");
+					Print_OptIn(client);
 				} else {
-					Reply(client, "You are already opted in.");
+					Print_AlreadyOptIn(client);
 				}
 			}
 			return Plugin_Handled;
@@ -106,14 +109,34 @@ public Action Command_stattrak(int client, int args) {
 			if (running) {
 				int index = optout_players.FindValue(client);
 				if (index > -1) {
-					PrintClient(client, "You are opted out");
+					Print_OptOut(client);
 				} else {
-					PrintClient(client, "You are opted in");
+					Print_OptIn(client);
 				}
 			} else {
-				PrintClient(client, "The game is not running");
+				Print_NotRunning(client);
 			}
 			return Plugin_Handled;
+			
+
+		// st_debug
+		} else if (StrEqual(arg, "debug", false)) {
+			GetCmdArg(2, arg, sizeof(arg));
+			if (StrEqual(arg, "state", false)) {
+				char buffer[256];
+				Format(buffer, sizeof(buffer), "starting:%b, running:%b, stopping:%b", starting, running, stopping);
+				PrintClient(client, buffer);
+				Format(buffer, sizeof(buffer), "targetGroup:%s, weapon_rand:%i", weapon_targetGroup, weapon_rand);
+				PrintClient(client, buffer);
+			} else if (StrEqual(arg, "weapon", false)) {
+				GetCmdArg(3, arg, sizeof(arg));
+				if (Weapons_SelectGroup(arg)) {
+					Print_WeaponGroup();
+				} else {
+					char buffer[256];
+					Format(buffer, sizeof(buffer), "%s is not a valid weapon group", arg);
+				}
+			}
 		}
 	}
 	return Plugin_Continue;

@@ -19,22 +19,22 @@ void Sound_PlayKill(int client) {
 	int team = GetClientTeam(client);
 	int flag;
 	if (team == 2) { // T
-	flag = CLIENTFILTER_TEAMONE;
+		flag = CLIENTFILTER_TEAMONE;
 	} else if (team == 3) { // CT
-	flag = CLIENTFILTER_TEAMTWO;
+		flag = CLIENTFILTER_TEAMTWO;
 	}
 	if (flag != 0) {
-	int size = Team_GetClientCount(team);
-	int[] clients = new int[size];
-	Client_Get(clients, flag);
-	for (int i = 0; i < size; i++) {
-		if (clients[i] == client) {
-		size -= 1;
-		clients[i] = clients[size];
-		break;
+		int size = Team_GetClientCount(team);
+		int[] clients = new int[size];
+		Client_Get(clients, flag);
+		for (int i = 0; i < size; i++) {
+			if (clients[i] == client) {
+			size -= 1;
+			clients[i] = clients[size];
+			break;
+			}
 		}
-	}
-	EmitSoundToClient(client, youkillSound);
-	EmitSound(clients, size, theyKillSound);
+		EmitSoundToClient(client, youkillSound);
+		EmitSound(clients, size, theyKillSound);
 	}
 }

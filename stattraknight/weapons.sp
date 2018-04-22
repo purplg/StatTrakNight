@@ -3,21 +3,22 @@ KeyValues kv;
 int weapon_numGroups;
 char weapon_targetGroup[32];
 int weapons_version = 5;
+int weapon_rand;
 
 void Weapons_Load() {
 	kv = new KeyValues("");
 
 	bool exists = FileExists(File_weapongroups);
 	if (exists) {
-	if (!kv.ImportFromFile(File_weapongroups)) {
-		PrintServer("Formatting of '%s' invalid", File_weapongroups);
-		kv = Weapons_New();
-	} else if (kv.GetNum("version") < weapons_version) {
-		PrintServer("Updated weapon groups");
-		kv = Weapons_New();
-	}
+		if (!kv.ImportFromFile(File_weapongroups)) {
+			PrintServer("Formatting of '%s' invalid", File_weapongroups);
+			kv = Weapons_New();
+		} else if (kv.GetNum("version") < weapons_version) {
+			PrintServer("Updated weapon groups");
+			kv = Weapons_New();
+		}
 	} else {
-	kv = Weapons_New();
+		kv = Weapons_New();
 	}
 	weapon_numGroups = kv.GetNum("numGroups");
 	Weapons_IsTargetGroup("");
@@ -30,14 +31,14 @@ KeyValues Weapons_New(bool write=true) {
 
 	kv.JumpToKey("groups", true);
 
-	kv.JumpToKey("sniper", true);
+	kv.JumpToKey("snipers", true);
 	kv.SetNum("ssg08", 0);
 	kv.SetNum("awp", 0);
 	kv.SetNum("g3sg1", 0);
 	kv.SetNum("scar20", 0);
 	kv.GoBack();
 
-	kv.JumpToKey("assault rifle", true);
+	kv.JumpToKey("assault rifles", true);
 	kv.SetNum("galilar", 0);
 	kv.SetNum("ak47", 0);
 	kv.SetNum("sg556", 0);
@@ -48,7 +49,7 @@ KeyValues Weapons_New(bool write=true) {
 	kv.SetNum("aug", 0);
 	kv.GoBack();
 
-	kv.JumpToKey("smg", true);
+	kv.JumpToKey("smgs", true);
 	kv.SetNum("mac10", 0);
 	kv.SetNum("mp7", 0);
 	kv.SetNum("ump45", 0);
@@ -57,19 +58,19 @@ KeyValues Weapons_New(bool write=true) {
 	kv.SetNum("mp9", 0);
 	kv.GoBack();
 
-	kv.JumpToKey("shotgun", true);
+	kv.JumpToKey("shotguns", true);
 	kv.SetNum("nova", 0);
 	kv.SetNum("xm1014", 0);
 	kv.SetNum("sawedoff", 0);
 	kv.SetNum("mag7", 0);
 	kv.GoBack();
 
-	kv.JumpToKey("machine gun", true);
+	kv.JumpToKey("machine guns", true);
 	kv.SetNum("m249", 0);
 	kv.SetNum("negev", 0);
 	kv.GoBack();
 
-	kv.JumpToKey("pistol", true);
+	kv.JumpToKey("pistols", true);
 	kv.SetNum("elite", 0);
 	kv.SetNum("cz75a", 0);
 	kv.SetNum("usp_silencer", 0);
@@ -83,23 +84,37 @@ KeyValues Weapons_New(bool write=true) {
 
 	kv.Rewind();
 	if (write) {
-	kv.ExportToFile(File_weapongroups);
+		kv.ExportToFile(File_weapongroups);
 	}
 	return kv;
 }
 
 void Weapon_NewGroup() {
-	int rand = Math_GetRandomInt(0, weapon_numGroups-1);
+	weapon_rand = Math_GetRandomInt(1, weapon_numGroups);
 	kv.Rewind();
 	kv.JumpToKey("groups");
 	kv.GotoFirstSubKey();
-	for (int i = 0; i < rand; i++) {
+	for (int i = 1; i <= weapon_rand; i++) {
 		kv.GotoNextKey();
 	}
-	kv.GetSectionName(weapon_targetGroup, 32);
+	kv.GetSectionName(weapon_targetGroup, sizeof(weapon_targetGroup));
 }
 
-bool Weapons_IsTargetGroup(const char[] weapon) {
+bool Weapons_IsValidGroup(const char weaponGroup[32]) {
+	kv.Rewind();
+	kv.JumpToKey("groups", false);
+	return kv.JumpToKey(weaponGroup, false);
+}
+
+bool Weapons_SelectGroup(const char weaponGroup[32]) {
+	if (Weapons_IsValidGroup(weaponGroup)) {
+		weapon_targetGroup = weaponGroup;
+		return true;
+	}
+	return false;
+}
+
+bool Weapons_IsTargetGroup(const char weapon[32]) {
 	if (strcmp("taser", weapon) == 0 ||
 		strcmp("knife_default_ct", weapon) == 0 ||
 		strcmp("knife_default_t", weapon) == 0 ||

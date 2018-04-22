@@ -7,54 +7,85 @@
 */
 void Game_Start(int client, int time=0) {
 	if (starting) {
-		Reply(client, "Event already starting next round.");
+		if (time > 0) {
+			Print_Starting(time);
+			restartMatch(time);
+		} else {
+			Print_AlreadyStarting(client);
+		}
 	} else if (stopping) {
 		stopping = false;
-		PrintAll("Event set to continue.");
+		Print_Continue();
 	} else if (running) {
-		Reply(client, "Event already running.");
+		Print_AlreadyRunning(client);
 	} else {
 		starting = true;
+		Print_Starting(time);
 		if (time > 0) {
-			PrintAll("Starting event in %i second%s.", time, Format_Plural(time));
-			if (GameRules_GetProp("m_bWarmupPeriod")) {
-				Game_WarmupRestart(time);
-			} else {
-				InsertServerCommand("mp_restartgame %i", time);
-			}
-		} else {
-			Reply(client, "Starting event next round.");
+			restartMatch(time);
 		}
 	}
+}
+
+void Game_NewRound() {
+	Print_Beta();
+	Print_Leaders();
+	
+	int newTarget = Game_NewTarget(T_TEAM);
+	if (Client_IsValid(newTarget)) {
+		T_TARGET = newTarget;
 	}
+	newTarget = Game_NewTarget(CT_TEAM);
+	if (Client_IsValid(newTarget)) {
+		CT_TARGET = newTarget;
+	}
+	Print_Targets();
+
+	Print_WeaponGroup();
+}
+
+int Game_NewTarget(int team) {
+	new flag;
+	if (team == T_TEAM) {
+		flag = CLIENTFILTER_TEAMONE;
+	} else if (team == CT_TEAM) {
+		flag = CLIENTFILTER_TEAMTWO;
+	}
+	if (flag == 0) return -1;
+	flag |= CLIENTFILTER_ALIVE;
+	int target = Client_GetRandom(flag);
+	return target;
+}
+
+void Game_Restart(int time=0) {
+	starting = true;
+	Print_Starting(time);
+	if (time > 0) {
+		restartMatch(time);
+	} else {
+		starting = true;
+	}
+}
 
 /**
-* Stop a StatTrak Event next round or after [time] in seconds
-*
-* @param client	The client that called the event to stop
+* Stop a StatTrak Event next round or after [time] in seconds * * @param client	The client that called the event to stop
 * @param time	The amount of time to wait to restart game to stop event. 0 = Next round
 * @noreturn
 */
 void Game_Stop(client=0, time=0) {
 	if (stopping) {
-		Reply(client, "Event already stopping next round.");
+		Print_AlreadyStopping(client);
 	} else if (starting) {
 		starting = false;
-		PrintAll("Event cancelled for next round.");
+		Print_Cancelled();
 	} else if (running) {
 		stopping = true;
+		Print_Stopping(time);
 		if (time > 0) {
-			PrintAll("Stopping event in %i second%s.", time, Format_Plural(time));
-			if (GameRules_GetProp("m_bWarmupPeriod")) {
-				Game_WarmupRestart(time);
-			} else {
-				InsertServerCommand("mp_restartgame %i", time);
-			}
-		} else {
-			PrintAll("Event will end next round.");
+			restartMatch(time);
 		}
 	} else {
-		Reply(client, "There isn't an event running.");
+		Print_NotRunning(client);
 	}
 }
 
@@ -69,6 +100,8 @@ void Game_Reset() {
 	running = false;
 	stopping = false;
 	starting = false;
+	T_TARGET = 0;
+	CT_TARGET = 0;
 	scoreboard_players.Clear();
 	scoreboard_points.Clear();
 }
@@ -80,3 +113,12 @@ void Game_WarmupRestart(int time) {
 public Action Game_StopWarmup(Handle timer) {
 	InsertServerCommand("mp_warmup_end");
 }
+
+void restartMatch(int time) {
+	if (GameRules_GetProp("m_bWarmupPeriod")) {
+		Game_WarmupRestart(time);
+	} else {
+		InsertServerCommand("mp_restartgame %i", time);
+	}
+}
+
