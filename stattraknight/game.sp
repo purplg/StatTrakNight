@@ -7,26 +7,40 @@
 */
 void Game_Start(int client, int time=0) {
 	if (starting) {
-		Reply(client, "Event already starting next round.");
+		Print_AlreadyStarting(client);
 	} else if (stopping) {
 		stopping = false;
-		PrintAll("Event set to continue.");
+		Print_Continue();
 	} else if (running) {
-		Reply(client, "Event already running.");
+		Print_AlreadyRunning(client);
 	} else {
 		starting = true;
+		Print_Starting(time);
 		if (time > 0) {
-			PrintAll("Starting event in %i second%s.", time, Format_Plural(time));
-			if (GameRules_GetProp("m_bWarmupPeriod")) {
-				Game_WarmupRestart(time);
-			} else {
-				InsertServerCommand("mp_restartgame %i", time);
-			}
-		} else {
-			Reply(client, "Starting event next round.");
+			restartMatch(time);
 		}
 	}
+}
+
+void Game_NewRound() {
+	Print_Beta();
+	T_TARGET = BeaconRandom(2);
+	CT_TARGET = BeaconRandom(3);
+
+	Print_Leaders();
+	Print_Targets();
+	Print_WeaponGroup();
+}
+
+void Game_Restart(int time=0) {
+	starting = true;
+	Print_Starting(time);
+	if (time > 0) {
+		restartMatch(time);
+	} else {
+		starting = true;
 	}
+}
 
 /**
 * Stop a StatTrak Event next round or after [time] in seconds
@@ -37,24 +51,18 @@ void Game_Start(int client, int time=0) {
 */
 void Game_Stop(client=0, time=0) {
 	if (stopping) {
-		Reply(client, "Event already stopping next round.");
+		Print_AlreadyStopping(client);
 	} else if (starting) {
 		starting = false;
-		PrintAll("Event cancelled for next round.");
+		Print_Cancelled();
 	} else if (running) {
 		stopping = true;
+		Print_Stopping(time);
 		if (time > 0) {
-			PrintAll("Stopping event in %i second%s.", time, Format_Plural(time));
-			if (GameRules_GetProp("m_bWarmupPeriod")) {
-				Game_WarmupRestart(time);
-			} else {
-				InsertServerCommand("mp_restartgame %i", time);
-			}
-		} else {
-			PrintAll("Event will end next round.");
+			restartMatch(time);
 		}
 	} else {
-		Reply(client, "There isn't an event running.");
+		Print_NotRunning(client);
 	}
 }
 
@@ -80,3 +88,12 @@ void Game_WarmupRestart(int time) {
 public Action Game_StopWarmup(Handle timer) {
 	InsertServerCommand("mp_warmup_end");
 }
+
+void restartMatch(int time) {
+	if (GameRules_GetProp("m_bWarmupPeriod")) {
+		Game_WarmupRestart(time);
+	} else {
+		InsertServerCommand("mp_restartgame %i", time);
+	}
+}
+

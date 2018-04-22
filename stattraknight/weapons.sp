@@ -3,6 +3,7 @@ KeyValues kv;
 int weapon_numGroups;
 char weapon_targetGroup[32];
 int weapons_version = 5;
+int weapon_rand;
 
 void Weapons_Load() {
 	kv = new KeyValues("");
@@ -89,11 +90,11 @@ KeyValues Weapons_New(bool write=true) {
 }
 
 void Weapon_NewGroup() {
-	int rand = Math_GetRandomInt(0, weapon_numGroups-1);
+	weapon_rand = Math_GetRandomInt(0, weapon_numGroups-1);
 	kv.Rewind();
 	kv.JumpToKey("groups");
 	kv.GotoFirstSubKey();
-	for (int i = 0; i < rand; i++) {
+	for (int i = 0; i < weapon_rand; i++) {
 		kv.GotoNextKey();
 	}
 	kv.GetSectionName(weapon_targetGroup, 32);
