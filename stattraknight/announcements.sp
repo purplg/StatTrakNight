@@ -51,7 +51,7 @@ void Print_NewTarget(int newTarget) {
 }
 
 void Print_WeaponGroup() {
-	PrintAll("Kill them with \x04%ss\x01.", weapon_targetGroup);
+	PrintAll("Kill them with \x04%s\x01.", weapon_targetGroup);
 }
 
 void Print_WrongWeapon(int victim) {

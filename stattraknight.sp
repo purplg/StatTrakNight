@@ -121,11 +121,22 @@ public Action Command_stattrak(int client, int args) {
 
 		// st_debug
 		} else if (StrEqual(arg, "debug", false)) {
-			char buffer[512];
-			Format(buffer, sizeof(buffer), "starting:%b, running:%b, stopping:%b", starting, running, stopping);
-			PrintClient(client, buffer);
-			Format(buffer, sizeof(buffer), "targetGroup:%s, weapon_rand:%i", weapon_targetGroup, weapon_rand);
-			PrintClient(client, buffer);
+			GetCmdArg(2, arg, sizeof(arg));
+			if (StrEqual(arg, "state", false)) {
+				char buffer[256];
+				Format(buffer, sizeof(buffer), "starting:%b, running:%b, stopping:%b", starting, running, stopping);
+				PrintClient(client, buffer);
+				Format(buffer, sizeof(buffer), "targetGroup:%s, weapon_rand:%i", weapon_targetGroup, weapon_rand);
+				PrintClient(client, buffer);
+			} else if (StrEqual(arg, "weapon", false)) {
+				GetCmdArg(3, arg, sizeof(arg));
+				if (Weapons_SelectGroup(arg)) {
+					Print_WeaponGroup();
+				} else {
+					char buffer[256];
+					Format(buffer, sizeof(buffer), "%s is not a valid weapon group", arg);
+				}
+			}
 		}
 	}
 	return Plugin_Continue;
