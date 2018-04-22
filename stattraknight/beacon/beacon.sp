@@ -35,20 +35,6 @@ new g_BeaconSerial[MAXPLAYERS+1] = { 0, ... };
 
 ConVar g_Cvar_BeaconRadius;
 
-BeaconRandom(team) {
-	new flag;
-	if (team == 2) {
-		flag = CLIENTFILTER_TEAMONE;
-	} else if (team == 3) {
-		flag = CLIENTFILTER_TEAMTWO;
-	}
-	if (flag == 0) return -1;
-	flag |= CLIENTFILTER_ALIVE;
-	new target = Client_GetRandom(flag);
-	PerformBeacon(target);
-	return target;
-}
-
 void CreateBeacon(client)
 {
 	g_BeaconSerial[client] = ++g_Serial_Gen;
@@ -75,7 +61,7 @@ void KillAllBeacons()
 
 void PerformBeacon(target)
 {
-	if (g_BeaconSerial[target] == 0)
+	if (Client_IsValid(target) && g_BeaconSerial[target] == 0)
 	{
 		CreateBeacon(target);
 	}

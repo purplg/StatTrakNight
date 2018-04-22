@@ -30,12 +30,31 @@ void Game_Start(int client, int time=0) {
 void Game_NewRound() {
 	Print_Beta();
 	Print_Leaders();
-
-	T_TARGET = BeaconRandom(T_TEAM);
-	CT_TARGET = BeaconRandom(CT_TEAM);
+	
+	int newTarget = Game_NewTarget(T_TEAM);
+	if (Client_IsValid(newTarget)) {
+		T_TARGET = newTarget;
+	}
+	newTarget = Game_NewTarget(CT_TEAM);
+	if (Client_IsValid(newTarget)) {
+		CT_TARGET = newTarget;
+	}
 	Print_Targets();
 
 	Print_WeaponGroup();
+}
+
+int Game_NewTarget(int team) {
+	new flag;
+	if (team == T_TEAM) {
+		flag = CLIENTFILTER_TEAMONE;
+	} else if (team == CT_TEAM) {
+		flag = CLIENTFILTER_TEAMTWO;
+	}
+	if (flag == 0) return -1;
+	flag |= CLIENTFILTER_ALIVE;
+	int target = Client_GetRandom(flag);
+	return target;
 }
 
 void Game_Restart(int time=0) {
@@ -49,9 +68,7 @@ void Game_Restart(int time=0) {
 }
 
 /**
-* Stop a StatTrak Event next round or after [time] in seconds
-*
-* @param client	The client that called the event to stop
+* Stop a StatTrak Event next round or after [time] in seconds * * @param client	The client that called the event to stop
 * @param time	The amount of time to wait to restart game to stop event. 0 = Next round
 * @noreturn
 */
