@@ -19,4 +19,3 @@ char[] Client_GetName(int client) {
 	GetClientName(client, name, MAX_NAME_LENGTH);
 	return name;
 }
-

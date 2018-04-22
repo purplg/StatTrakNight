@@ -1,10 +1,10 @@
 char[] Format_GetPlayerColor(int client) {
 	char buffer[5];
 	switch (GetClientTeam(client)) {
-		case TEAM_T: {
+		case T_TEAM: {
 			buffer = "\x09";
 		}
-		case TEAM_CT: {
+		case CT_TEAM: {
 			buffer = "\x0D";
 		}
 	}

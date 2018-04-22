@@ -29,11 +29,12 @@ void Game_Start(int client, int time=0) {
 
 void Game_NewRound() {
 	Print_Beta();
-	T_TARGET = BeaconRandom(2);
-	CT_TARGET = BeaconRandom(3);
-
 	Print_Leaders();
+
+	T_TARGET = BeaconRandom(T_TEAM);
+	CT_TARGET = BeaconRandom(CT_TEAM);
 	Print_Targets();
+
 	Print_WeaponGroup();
 }
 
@@ -82,6 +83,8 @@ void Game_Reset() {
 	running = false;
 	stopping = false;
 	starting = false;
+	T_TARGET = 0;
+	CT_TARGET = 0;
 	scoreboard_players.Clear();
 	scoreboard_points.Clear();
 }

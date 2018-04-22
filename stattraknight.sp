@@ -12,7 +12,7 @@ public Plugin myinfo =
 	url = "https://github.com/purplg/StatTrakNight"
 };
 
-const int TEAM_T = 2, TEAM_CT = 3;
+const int T_TEAM = 2, CT_TEAM = 3;
 int T_TARGET, CT_TARGET;
 bool starting, stopping, running;
 

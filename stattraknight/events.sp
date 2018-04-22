@@ -54,12 +54,12 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 				}
 			} else {
 				// Pick a new target if player suicides
-				if (GetClientTeam(victim) == TEAM_CT) {
-					CT_TARGET = BeaconRandom(TEAM_CT);
+				if (GetClientTeam(victim) == CT_TEAM) {
+					CT_TARGET = BeaconRandom(CT_TEAM);
 					Print_NewTarget(CT_TARGET);
 				}
-				else if (GetClientTeam(victim) == TEAM_T) {
-					T_TARGET = BeaconRandom(TEAM_T);
+				else if (GetClientTeam(victim) == T_TEAM) {
+					T_TARGET = BeaconRandom(T_TEAM);
 					Print_NewTarget(T_TARGET);
 				}
 			}
@@ -71,9 +71,9 @@ void TargetKilled(int attacker, int victim) {
 	int points = Points_Add(attacker);
 	Print_TargetKilled(attacker, victim, points);
 
-	if (GetClientTeam(victim) == TEAM_CT)
+	if (GetClientTeam(victim) == CT_TEAM)
 		CT_TARGET = -1;
-	else if (GetClientTeam(victim) == TEAM_T)
+	else if (GetClientTeam(victim) == T_TEAM)
 		T_TARGET = -1;
 }
 
